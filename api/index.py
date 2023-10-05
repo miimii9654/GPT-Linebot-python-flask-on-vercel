@@ -1,7 +1,7 @@
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from linebot.models import MessageEvent, TextMessage, TextSendMessage, FlexSendMessage
 from api.chatgpt import ChatGPT
 
 import os
@@ -38,7 +38,10 @@ def handle_message(event):
     global working_status
     if event.message.type != "text":
         return
-
+    #-------------設定flex message----------------------------------
+    profile = line_bot_api.get_profile(line_id) # 取得line名稱
+    flex_content = get_flex_message_content(profile.display_name) # 設定flexmessage模板
+    #---------------------------------------------------------------
     if event.message.text == "說話":
         working_status = True
         line_bot_api.reply_message(
