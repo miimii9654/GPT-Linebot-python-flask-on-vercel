@@ -35,7 +35,7 @@ def callback():
         abort(400)
     return 'OK'
 
-def pay(user_name):
+def pay(line_id,user_name):
     product_name = 'AI敏捷專家Line諮詢(1小時)'
     price = 99
     order_id = str(uuid.uuid4())
@@ -73,7 +73,7 @@ def handle_message(event):
         line_id = json.loads(str(event.source))['userId']
         user_name = line_bot_api.get_profile(line_id).display_name # 取得line名稱
         #profile
-        pay(user_name)       
+        pay(line_id,user_name)       
         return
         
     if event.message.text == "閉嘴":
