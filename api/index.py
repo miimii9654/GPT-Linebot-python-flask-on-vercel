@@ -7,11 +7,13 @@ from api.flex_message_template import get_flex_message_content
 import json
 import os
 import uuid
-
+LINE_PAY_CHANNEL_ID = LINE_PAY_CHANNEL_ID
+LINE_PAY_CHANNEL_SECRET = LINE_PAY_CHANNEL_SECRET
+line_pay_api = LinePayApi(LINE_PAY_CHANNEL_ID, LINE_PAY_CHANNEL_SECRET, is_sandbox=True)
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 working_status = os.getenv("DEFALUT_TALKING", default = "true").lower() == "true"
-
+LINE_PAY_REQEST_BASE_URL = "https://{}".format('gpt-linebot-python-flask-on-vercel-puce-two.vercel.app') 
 app = Flask(__name__)
 chatgpt = ChatGPT()
 CACHE = {} #付款用
@@ -44,11 +46,36 @@ def pay(line_id,user_name):
     CACHE["order_id"] = order_id
     CACHE["amount"] = amount
     CACHE["currency"] = currency
-    #-------------設定flex message----------------------------------
-    
-    
+    #-------------設定flex message----------------------------------   
     flex_content = get_flex_message_content(user_name, order_id) # 設定flexmessage模板
     #---------------------------------------------------------------
+    request_options = {
+        "amount": amount,
+        "currency": currency,
+        "orderId": order_id,
+        "packages": [
+            {
+                "id": "package-999",
+                "amount": amount,
+                "name": "Sample package",
+                "products": [
+                    {
+                        "id": "product-001",
+                        "name": "Sample product",
+                        "imageUrl": "https://www.pm-abc.com.tw/img/index/banner_pc_1.jpg",
+                                    "quantity": 1,
+                                    "price": price
+                    }
+                ]
+            }
+        ],
+        "redirectUrls": {
+            "confirmUrl": LINE_PAY_REQEST_BASE_URL + "/confirm",
+            "cancelUrl": LINE_PAY_REQEST_BASE_URL + "/cancel"
+        }
+    }
+
+    
     line_bot_api.push_message(line_id, FlexSendMessage(
                         alt_text='hello',
                         contents=flex_content
