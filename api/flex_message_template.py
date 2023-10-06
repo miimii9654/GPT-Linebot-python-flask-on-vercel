@@ -36,6 +36,27 @@ def get_flex_message_content(user_name):
                         "contents": [
                         {
                             "type": "text",
+                            "text": "商品名稱",
+                            "color": "#aaaaaa",
+                            "size": "md",
+                            "flex": 1
+                        },
+                        {
+                            "type": "text",
+                            "text": "AI敏捷專家Line諮詢(1小時)",
+                            "color": "#666666",
+                            "size": "xs",
+                            "flex": 2
+                        }
+                        ]
+                    },    
+                    {
+                        "type": "box",
+                        "layout": "baseline",
+                        "spacing": "sm",
+                        "contents": [
+                        {
+                            "type": "text",
                             "text": "訂單編號",
                             "color": "#aaaaaa",
                             "size": "md",
