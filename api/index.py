@@ -4,7 +4,7 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, FlexSendMessage
 from api.chatgpt import ChatGPT
 from api.flex_message_template import get_flex_message_content
-
+import json
 import os
 
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
@@ -43,11 +43,14 @@ def handle_message(event):
     print(str(event))
     print("--------------")
     print(str(event.source))
+    tmp_obj = json.loads(str(event.source))
     print("--------------")
     #print(str(event.source.userId))
     #print(event['source']['userId']))
-    #print('--------------------')
-    print(str(event.source.userid))
+    print(str(tmp_obj))
+    print(str(tmp_obj.userId))
+    print('--------------------')
+    
     line_id = "U03c96fa8fd76c84734a8246be601bcee" #event.source.userId
     profile = line_bot_api.get_profile(line_id) # 取得line名稱
     flex_content = get_flex_message_content(profile.display_name) # 設定flexmessage模板
