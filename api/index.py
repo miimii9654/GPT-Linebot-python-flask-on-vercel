@@ -40,6 +40,8 @@ def handle_message(event):
     if event.message.type != "text":
         return
     #-------------設定flex message----------------------------------
+    print(str(event))
+    line_id = event.source.userId
     profile = line_bot_api.get_profile(line_id) # 取得line名稱
     flex_content = get_flex_message_content(profile.display_name) # 設定flexmessage模板
     #---------------------------------------------------------------
