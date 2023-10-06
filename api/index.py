@@ -35,7 +35,7 @@ def callback():
         abort(400)
     return 'OK'
 
-def pay():
+def pay(user_name):
     product_name = 'AI敏捷專家Line諮詢(1小時)'
     price = 99
     order_id = str(uuid.uuid4())
@@ -45,13 +45,9 @@ def pay():
     CACHE["amount"] = amount
     CACHE["currency"] = currency
     #-------------設定flex message----------------------------------
-    print(str(event)) 
-    #tmp_obj = json.loads(str(event.source))
-    #line_id = str(tmp_obj['userId'])
-    line_id = json.loads(str(event.source))['userId']
-    profile = line_bot_api.get_profile(line_id) # 取得line名稱
     
-    flex_content = get_flex_message_content(profile.display_name, order_id) # 設定flexmessage模板
+    
+    flex_content = get_flex_message_content(user_name, order_id) # 設定flexmessage模板
     #---------------------------------------------------------------
     line_bot_api.push_message(line_id, FlexSendMessage(
                         alt_text='hello',
@@ -71,7 +67,13 @@ def handle_message(event):
             TextSendMessage(text="我可以說話囉，歡迎來跟我互動 ^_^ "))
         return
     if event.message.text == "pay":
-        pay()       
+        print(str(event)) 
+        #tmp_obj = json.loads(str(event.source))
+        #line_id = str(tmp_obj['userId'])
+        line_id = json.loads(str(event.source))['userId']
+        user_name = line_bot_api.get_profile(line_id).display_name # 取得line名稱
+        #profile
+        pay(user_name)       
         return
         
     if event.message.text == "閉嘴":
