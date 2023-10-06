@@ -1,4 +1,4 @@
-def get_flex_message_content(user_name):
+def get_flex_message_content(user_name,order_id):
     return {
             "type": "bubble",
             "hero": {
@@ -64,7 +64,7 @@ def get_flex_message_content(user_name):
                         },
                         {
                             "type": "text",
-                            "text": "123456789",
+                            "text": order_id,
                             "color": "#666666",
                             "size": "md",
                             "flex": 2
