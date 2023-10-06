@@ -51,7 +51,7 @@ def handle_message(event):
     print(str(tmp_obj['userId']))
     print('--------------------')
     
-    line_id = "U03c96fa8fd76c84734a8246be601bcee" #event.source.userId
+    line_id = str(tmp_obj['userId']) #event.source.userId
     profile = line_bot_api.get_profile(line_id) # 取得line名稱
     flex_content = get_flex_message_content(profile.display_name) # 設定flexmessage模板
     #---------------------------------------------------------------
