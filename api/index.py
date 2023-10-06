@@ -48,7 +48,7 @@ def handle_message(event):
     #print(str(event.source.userId))
     #print(event['source']['userId']))
     print(str(tmp_obj))
-    print(str(tmp_obj.userId))
+    print(str(tmp_obj['userId']))
     print('--------------------')
     
     line_id = "U03c96fa8fd76c84734a8246be601bcee" #event.source.userId
