@@ -41,6 +41,7 @@ def handle_message(event):
         return
     #-------------設定flex message----------------------------------
     print(str(event))
+    print("--------------")
     print(event.source.userId)
     print('--------------------')
     line_id = event.source.userId
