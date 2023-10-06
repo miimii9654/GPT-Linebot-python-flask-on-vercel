@@ -6,6 +6,7 @@ from api.chatgpt import ChatGPT
 from api.flex_message_template import get_flex_message_content
 import json
 import os
+import uuid
 
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
