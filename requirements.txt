@@ -2,3 +2,7 @@ Flask==2.2.2
 line-bot-sdk
 openai
 Werkzeug==2.2.2
+
+line-pay==0.1.0
+requests
+python-dotenv==0.10.3
