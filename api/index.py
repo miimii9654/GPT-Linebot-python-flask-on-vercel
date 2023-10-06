@@ -43,7 +43,9 @@ def handle_message(event):
     print(str(event))
     print("--------------")
     print(str(event.source))
-    print(str(event.source.userId))
+    print("--------------")
+    #print(str(event.source.userId))
+    print(event['source']['userId']))
     print('--------------------')
     line_id = event.source.userId
     profile = line_bot_api.get_profile(line_id) # 取得line名稱
