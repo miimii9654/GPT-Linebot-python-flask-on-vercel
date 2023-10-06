@@ -61,7 +61,16 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text="我可以說話囉，歡迎來跟我互動 ^_^ "))
         return
-
+    if event.message.text == "pay":
+        line_bot_api.push_message(line_id, FlexSendMessage(
+                            alt_text='hello',
+                            contents=flex_content
+                        ))
+        #line_bot_api.reply_message(
+        #    event.reply_token,
+        #    TextSendMessage(text="我可以說話囉，歡迎來跟我互動 ^_^ "))
+        return
+        
     if event.message.text == "閉嘴":
         working_status = False
         line_bot_api.reply_message(
