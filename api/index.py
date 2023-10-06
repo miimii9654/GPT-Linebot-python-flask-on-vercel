@@ -41,6 +41,8 @@ def handle_message(event):
         return
     #-------------設定flex message----------------------------------
     print(str(event))
+    print(event.source.userId)
+    print('--------------------')
     line_id = event.source.userId
     profile = line_bot_api.get_profile(line_id) # 取得line名稱
     flex_content = get_flex_message_content(profile.display_name) # 設定flexmessage模板
