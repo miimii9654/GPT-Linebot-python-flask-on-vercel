@@ -7,8 +7,8 @@ from api.flex_message_template import get_flex_message_content
 import json
 import os
 import uuid
-LINE_PAY_CHANNEL_ID = LINE_PAY_CHANNEL_ID
-LINE_PAY_CHANNEL_SECRET = LINE_PAY_CHANNEL_SECRET
+LINE_PAY_CHANNEL_ID = os.getenv("LINE_PAY_CHANNEL_ID")
+LINE_PAY_CHANNEL_SECRET = os.getenv("LINE_CHANNEL_SECRET")
 line_pay_api = LinePayApi(LINE_PAY_CHANNEL_ID, LINE_PAY_CHANNEL_SECRET, is_sandbox=True)
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
