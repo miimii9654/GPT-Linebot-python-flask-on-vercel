@@ -2,6 +2,7 @@ from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, FlexSendMessage
+from linepay import LinePayApi
 from api.chatgpt import ChatGPT
 from api.flex_message_template import get_flex_message_content
 import json
