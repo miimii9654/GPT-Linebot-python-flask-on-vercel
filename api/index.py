@@ -5,7 +5,7 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage, FlexSendM
 from linepay import LinePayApi
 from api.chatgpt import ChatGPT
 from api.flex_message_template import get_flex_message_content
-import api.ecpay_payment_sdk #as ecpay
+from api.ecpay_payment_sdk import ECPayPaymentSdk
 import json
 import os
 import uuid
