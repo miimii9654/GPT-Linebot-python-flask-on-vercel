@@ -29,7 +29,8 @@ CACHE = {} #付款用
 def home():
     return 'Hello, World!'
 
-@app.route("/ecpay", methods=['GET'])
+#@app.route("/ecpay", methods=['GET'])
+@payment.route('/ecpay', methods=['GET'])
 def ecpay():
     """
     spec = importlib.util.spec_from_file_location(
@@ -39,13 +40,13 @@ def ecpay():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     """
-    line_id = request.args.get("line_id")
-    user_name = request.args.get("user_name")
-    print('line_id:',line_id,'user_name:',user_name)
+    MerchantTradeNo = request.args.get("MerchantTradeNo")
+    #user_name = request.args.get("user_name")
+    print('MerchantTradeNo:',MerchantTradeNo )
     order_params = {
         #'line_id': line_id,
         #'user_name': user_name,
-        'MerchantTradeNo': datetime.now().strftime("NO%Y%m%d%H%M%S"),
+        'MerchantTradeNo': MerchantTradeNo, #datetime.now().strftime("NO%Y%m%d%H%M%S"),
         'StoreID': '',
         'MerchantTradeDate': datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
@@ -177,9 +178,10 @@ def pay(line_id,user_name):
     order_id = str(uuid.uuid4())
     amount = 1
     currency = "TWD"
-    CACHE["order_id"] = order_id
+    CACHE["order_id"] = datetime.now().strftime("NO%Y%m%d%H%M%S") #order_id
     CACHE["amount"] = amount
     CACHE["currency"] = currency
+    
     #-------------設定flex message----------------------------------   
     flex_content = get_flex_message_content(line_id, user_name, order_id) # 設定flexmessage模板
     #---------------------------------------------------------------
