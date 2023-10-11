@@ -35,6 +35,7 @@ def home():
 # ReturnURL: 綠界 Server 端回傳 (POST) 
 @app.route('/receive_result', methods=['POST'])
 def receive_result():
+    print("3.receive_result  order_id:",session['order_id'],',line_id:',session['line_id'],',user_name:',session['user_name'])
     """
     result = request.form['RtnMsg']
     tid = request.form['CustomField1']
@@ -57,13 +58,13 @@ def ecpay():
     """
     host_name = request.host_url
     #MerchantTradeNo = request.args.get("MerchantTradeNo")
-    print("2.ecpay  order_id:",CACHE["order_id"],",host_name:",host_name)
+    print("2.ecpay  order_id:",session['order_id'],",host_name:",host_name)
     #user_name = request.args.get("user_name")
     #print('MerchantTradeNo:',MerchantTradeNo )
     order_params = {
         #'line_id': line_id,
         #'user_name': user_name,
-        'MerchantTradeNo': CACHE["order_id"], #datetime.now().strftime("NO%Y%m%d%H%M%S"),
+        'MerchantTradeNo': session['order_id'], #datetime.now().strftime("NO%Y%m%d%H%M%S"),
         'StoreID': '',
         'MerchantTradeDate': datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
@@ -196,6 +197,7 @@ def pay(line_id,user_name):
     amount = 1
     currency = "TWD"
     CACHE["order_id"] = order_id
+    session['order_id'] = order_id
     print("1.pay  order_id:",order_id,',line_id:',line_id,',user_name:',user_name)
     CACHE["amount"] = amount
     CACHE["currency"] = currency
@@ -256,8 +258,8 @@ def handle_message(event):
         #print(str(event)) 
         #tmp_obj = json.loads(str(event.source))
         #line_id = str(tmp_obj['userId'])
-        line_id = json.loads(str(event.source))['userId']
-        user_name = line_bot_api.get_profile(line_id).display_name # 取得line名稱
+        #line_id = json.loads(str(event.source))['userId']
+        #user_name = line_bot_api.get_profile(line_id).display_name # 取得line名稱
         #profile
         pay(line_id,user_name)       
         return
