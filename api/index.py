@@ -53,9 +53,11 @@ def return_url():
 # order_result_url: 綠界 Server 端回傳 (POST) 
 @app.route('/order_result_url', methods=['POST'])
 def order_result_url():
-    result = request.form['RtnMsg']
-    print("4.order_result_url  order_id:",CACHE["order_id"],',line_id:',CACHE['line_id'],',user_name:',CACHE['user_name'])
-    print(result)
+    RtnMsg = request.form['RtnMsg']
+    #print("4.order_result_url  order_id:",CACHE["order_id"],',line_id:',CACHE['line_id'],',user_name:',CACHE['user_name'])
+    print(RtnMsg)
+    order_id = request.form['MerchantTradeNo']
+    print('4.order_result_url   order_id =>',order_id)
     """
     result = request.form['RtnMsg']
     tid = request.form['CustomField1']
