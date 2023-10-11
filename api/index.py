@@ -1,4 +1,4 @@
-from flask import Flask, request, abort
+from flask import Flask, request, abort,session
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, FlexSendMessage
@@ -244,6 +244,8 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text="我可以說話囉，歡迎來跟我互動 ^_^ "))
         return
+    session['line_id'] = ''
+    session['user_name'] = ''
     if event.message.text == "pay":
         print(str(event)) 
         #tmp_obj = json.loads(str(event.source))
