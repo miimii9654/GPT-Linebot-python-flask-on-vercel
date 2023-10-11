@@ -49,7 +49,7 @@ def ecpay():
         'StoreID': '',
         'MerchantTradeDate': datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
-        'TotalAmount': 99,
+        'TotalAmount': 10,
         'TradeDesc': '訂單測試',
         'ItemName': 'AI敏捷專家Line諮詢(1小時)',
         'ReturnURL': 'https://gpt-linebot-python-flask-on-vercel-puce-two.vercel.app/',  #'https://www.ecpay.com.tw/return_url.php',
