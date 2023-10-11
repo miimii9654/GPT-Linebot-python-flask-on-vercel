@@ -35,11 +35,11 @@ def home():
 # return_url: 綠界 Server 端回傳 (POST) 
 @app.route('/return_url', methods=['POST'])
 def return_url():
-    print("3.receive_result  order_id:",CACHE["order_id"],',line_id:',session['line_id'],',user_name:',session['user_name'])
+    #print("3.receive_result  order_id:",CACHE["order_id"],',line_id:',session['line_id'],',user_name:',session['user_name'])
     result = request.form['RtnMsg']
     print(result)
     order_id = request.form['MerchantTradeNo']
-    print('order_id =>',order_id)
+    print('3.return_url  order_id =>',order_id)
     """
     result = request.form['RtnMsg']
     tid = request.form['CustomField1']
@@ -48,9 +48,9 @@ def return_url():
     db.session.add(trade_detail)
     db.session.commit()
     """
-    return '1|OK'
+    return '3.return_url  order_id =>'+order_id+',RtnMsg:'+RtnMsg
 
-# order_result_url: 綠界 Server 端回傳 (POST) 
+# order_result_url: 綠界 Server 端回傳 (POST) 失敗
 @app.route('/order_result_url', methods=['POST'])
 def order_result_url():
     RtnMsg = request.form['RtnMsg']
@@ -66,7 +66,7 @@ def order_result_url():
     db.session.add(trade_detail)
     db.session.commit()
     """
-    return '1|OK'
+    return '4.order_result_url   order_id =>'+order_id+',RtnMsg:'+RtnMsg
     
 @app.route("/ecpay", methods=['GET']) 
 def ecpay():
