@@ -29,6 +29,19 @@ CACHE = {} #付款用
 def home():
     return 'Hello, World!'
 
+# ReturnURL: 綠界 Server 端回傳 (POST) 
+@app.route('/receive_result', methods=['POST'])
+def receive_result():
+    """
+    result = request.form['RtnMsg']
+    tid = request.form['CustomField1']
+    trade_detail = sql.Transaction.query.filter_by(tid=tid).first()
+    trade_detail.status = '交易成功 sever post'
+    db.session.add(trade_detail)
+    db.session.commit()
+    """
+    return '1|OK'
+    
 @app.route("/ecpay", methods=['GET']) 
 def ecpay():
     """
@@ -40,7 +53,7 @@ def ecpay():
     spec.loader.exec_module(module)
     """
     #MerchantTradeNo = request.args.get("MerchantTradeNo")
-    print("order_id:",CACHE["order_id"])
+    print("2.ecpay  order_id:",CACHE["order_id"])
     #user_name = request.args.get("user_name")
     #print('MerchantTradeNo:',MerchantTradeNo )
     order_params = {
@@ -153,7 +166,7 @@ def ecpay():
         action_url = 'https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5' # 正式環境
         html = ecpay_payment_sdk.gen_html_post_form(action_url, final_order_params)
         html = '<html><body>'+html+'</body></html>'
-        print(html)
+        #print(html)
         return html
     except Exception as error:
         print('An exception happened: ' + str(error))
@@ -179,7 +192,7 @@ def pay(line_id,user_name):
     amount = 1
     currency = "TWD"
     CACHE["order_id"] = order_id
-    print("order_id:",order_id,',line_id:',line_id,',user_name:',user_name)
+    print("1.pay  order_id:",order_id,',line_id:',line_id,',user_name:',user_name)
     CACHE["amount"] = amount
     CACHE["currency"] = currency
     
