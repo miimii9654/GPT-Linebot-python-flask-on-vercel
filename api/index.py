@@ -40,13 +40,14 @@ def ecpay():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     """
-    MerchantTradeNo = request.args.get("MerchantTradeNo")
+    #MerchantTradeNo = request.args.get("MerchantTradeNo")
+    print("order_id:",CACHE["order_id"])
     #user_name = request.args.get("user_name")
     print('MerchantTradeNo:',MerchantTradeNo )
     order_params = {
         #'line_id': line_id,
         #'user_name': user_name,
-        'MerchantTradeNo': MerchantTradeNo, #datetime.now().strftime("NO%Y%m%d%H%M%S"),
+        'MerchantTradeNo': CACHE["order_id"], #datetime.now().strftime("NO%Y%m%d%H%M%S"),
         'StoreID': '',
         'MerchantTradeDate': datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
@@ -175,10 +176,11 @@ def callback():
 def pay(line_id,user_name):
     product_name = 'AI敏捷專家Line諮詢(1小時)'
     price = 99
-    order_id = str(uuid.uuid4())
+    order_id = datetime.now().strftime("NO%Y%m%d%H%M%S") #str(uuid.uuid4())
     amount = 1
     currency = "TWD"
-    CACHE["order_id"] = datetime.now().strftime("NO%Y%m%d%H%M%S") #order_id
+    CACHE["order_id"] = order_id
+    print("order_id:",order_id,',line_id:',line_id,',user_name:',user_name)
     CACHE["amount"] = amount
     CACHE["currency"] = currency
     
