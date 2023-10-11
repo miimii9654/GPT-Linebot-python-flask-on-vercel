@@ -21,6 +21,9 @@ line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 working_status = os.getenv("DEFALUT_TALKING", default = "true").lower() == "true"
 LINE_PAY_REQEST_BASE_URL = "https://{}".format('gpt-linebot-python-flask-on-vercel-puce-two.vercel.app') 
 app = Flask(__name__)
+app.secret_key = 'super secret string'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=31)
+
 chatgpt = ChatGPT()
 CACHE = {} #付款用
 
