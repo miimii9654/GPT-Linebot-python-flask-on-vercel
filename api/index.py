@@ -124,9 +124,14 @@ def ecpay():
     
     # 建立實體
     ecpay_payment_sdk = ECPayPaymentSdk(
-        MerchantID='2000132',
-        HashKey='5294y06JbISpM5x9',
-        HashIV='v77hoKGq4kWxNNIS'
+        #測試用
+        #MerchantID='2000132',
+        #HashKey='5294y06JbISpM5x9',
+        #HashIV='v77hoKGq4kWxNNIS'
+        #長宏
+        MerchantID='3238602',
+        HashKey='PgIIxM6WewzcNXQ0',
+        HashIV='yYakdCvLQDF9nlIw'
     )
     
     # 合併延伸參數
@@ -143,8 +148,8 @@ def ecpay():
         final_order_params = ecpay_payment_sdk.create_order(order_params)
     
         # 產生 html 的 form 格式
-        action_url = 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5'  # 測試環境
-        # action_url = 'https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5' # 正式環境
+        #action_url = 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5'  # 測試環境
+        action_url = 'https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5' # 正式環境
         html = ecpay_payment_sdk.gen_html_post_form(action_url, final_order_params)
         html = '<html><body>'+html+'</body></html>'
         print(html)
