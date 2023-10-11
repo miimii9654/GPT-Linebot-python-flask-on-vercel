@@ -32,10 +32,30 @@ CACHE = {} #付款用
 def home():
     return 'Hello, World!'
 
-# ReturnURL: 綠界 Server 端回傳 (POST) 
-@app.route('/receive_result', methods=['POST'])
-def receive_result():
+# return_url: 綠界 Server 端回傳 (POST) 
+@app.route('/return_url', methods=['POST'])
+def return_url():
     print("3.receive_result  order_id:",CACHE["order_id"],',line_id:',session['line_id'],',user_name:',session['user_name'])
+    result = request.form['RtnMsg']
+    print(result)
+    order_id = request.form['MerchantTradeNo']
+    print('order_id =>',order_id)
+    """
+    result = request.form['RtnMsg']
+    tid = request.form['CustomField1']
+    trade_detail = sql.Transaction.query.filter_by(tid=tid).first()
+    trade_detail.status = '交易成功 sever post'
+    db.session.add(trade_detail)
+    db.session.commit()
+    """
+    return '1|OK'
+
+# order_result_url: 綠界 Server 端回傳 (POST) 
+@app.route('/order_result_url', methods=['POST'])
+def order_result_url():
+    result = request.form['RtnMsg']
+    print("4.order_result_url  order_id:",CACHE["order_id"],',line_id:',CACHE['line_id'],',user_name:',CACHE['user_name'])
+    print(result)
     """
     result = request.form['RtnMsg']
     tid = request.form['CustomField1']
@@ -71,13 +91,13 @@ def ecpay():
         'TotalAmount': 5,
         'TradeDesc': '訂單測試',
         'ItemName': 'AI敏捷專家Line諮詢(1小時)',
-        'ReturnURL': host_name+'receive_result', #'https://gpt-linebot-python-flask-on-vercel-puce-two.vercel.app/',  #'https://www.ecpay.com.tw/return_url.php',
+        'ReturnURL': host_name+'return_url', #'https://gpt-linebot-python-flask-on-vercel-puce-two.vercel.app/',  #'https://www.ecpay.com.tw/return_url.php',
         'ChoosePayment': 'ALL',
         'ClientBackURL': 'https://www.ecpay.com.tw/client_back_url.php', # 'https://tw.yahoo.com/',
         'ItemURL': 'https://www.ecpay.com.tw/item_url.php',
         'Remark': '交易備註',
         'ChooseSubPayment': '',
-        'OrderResultURL': 'https://udn.com/news/index', #'https://www.ecpay.com.tw/order_result_url.php',
+        'OrderResultURL': host_name+'order_result_url', #'https://udn.com/news/index', #'https://www.ecpay.com.tw/order_result_url.php',
         'NeedExtraPaidInfo': 'Y',
         'DeviceSource': '',
         'IgnorePayment': '',
