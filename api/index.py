@@ -43,8 +43,8 @@ def ecpay():
     user_name = request.args.get("user_name")
     print('line_id:',line_id,'user_name:',user_name)
     order_params = {
-        'line_id': line_id,
-        'user_name': user_name,
+        #'line_id': line_id,
+        #'user_name': user_name,
         'MerchantTradeNo': datetime.now().strftime("NO%Y%m%d%H%M%S"),
         'StoreID': '',
         'MerchantTradeDate': datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
