@@ -45,7 +45,7 @@ def ecpay():
         'StoreID': '',
         'MerchantTradeDate': datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
-        'TotalAmount': 99,
+        'TotalAmount': 1, #99,
         'TradeDesc': '訂單測試',
         'ItemName': 'AI敏捷專家Line諮詢(1小時)',
         'ReturnURL': 'https://gpt-linebot-python-flask-on-vercel-puce-two.vercel.app/',  #'https://www.ecpay.com.tw/return_url.php',
@@ -172,7 +172,7 @@ def pay(line_id,user_name):
     CACHE["amount"] = amount
     CACHE["currency"] = currency
     #-------------設定flex message----------------------------------   
-    flex_content = get_flex_message_content(user_name, order_id) # 設定flexmessage模板
+    flex_content = get_flex_message_content(line_id, user_name, order_id) # 設定flexmessage模板
     #---------------------------------------------------------------
     request_options = {
         "amount": amount,
