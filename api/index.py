@@ -49,7 +49,7 @@ def ecpay():
         'TradeDesc': '訂單測試',
         'ItemName': 'AI敏捷專家Line諮詢(1小時)',
         'ReturnURL': 'https://www.ecpay.com.tw/return_url.php',
-        'ChoosePayment': 'Credit',
+        'ChoosePayment': 'ALL',
         'ClientBackURL': 'https://www.ecpay.com.tw/client_back_url.php',
         'ItemURL': 'https://www.ecpay.com.tw/item_url.php',
         'Remark': '交易備註',
@@ -68,11 +68,27 @@ def ecpay():
     }
     
     extend_params_1 = {
+        'ExpireDate': 7,
+        'PaymentInfoURL': 'https://www.ecpay.com.tw/payment_info_url.php',
+        'ClientRedirectURL': '',
+    }
+    
+    extend_params_2 = {
+        'StoreExpireDate': 15,
+        'Desc_1': '',
+        'Desc_2': '',
+        'Desc_3': '',
+        'Desc_4': '',
+        'PaymentInfoURL': 'https://www.ecpay.com.tw/payment_info_url.php',
+        'ClientRedirectURL': '',
+    }
+    
+    extend_params_3 = {
         'BindingCard': 0,
         'MerchantMemberID': '',
     }
     
-    extend_params_2 = {
+    extend_params_4 = {
         'Redeem': 'N',
         'UnionPay': 0,
     }
@@ -112,6 +128,8 @@ def ecpay():
     # 合併延伸參數
     order_params.update(extend_params_1)
     order_params.update(extend_params_2)
+    order_params.update(extend_params_3)
+    order_params.update(extend_params_4)
     
     # 合併發票參數
     order_params.update(inv_params)
