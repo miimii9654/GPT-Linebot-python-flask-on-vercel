@@ -54,7 +54,7 @@ def ecpay():
         'ItemURL': 'https://www.ecpay.com.tw/item_url.php',
         'Remark': '交易備註',
         'ChooseSubPayment': '',
-        'OrderResultURL': 'https://www.ecpay.com.tw/order_result_url.php',
+        'OrderResultURL': 'https://udn.com/news/index', #'https://www.ecpay.com.tw/order_result_url.php',
         'NeedExtraPaidInfo': 'Y',
         'DeviceSource': '',
         'IgnorePayment': '',
