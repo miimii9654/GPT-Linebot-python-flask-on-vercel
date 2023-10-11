@@ -29,8 +29,7 @@ CACHE = {} #付款用
 def home():
     return 'Hello, World!'
 
-#@app.route("/ecpay", methods=['GET'])
-@payment.route('/ecpay', methods=['GET'])
+@app.route("/ecpay", methods=['GET']) 
 def ecpay():
     """
     spec = importlib.util.spec_from_file_location(
