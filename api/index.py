@@ -244,10 +244,13 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text="我可以說話囉，歡迎來跟我互動 ^_^ "))
         return
-    session['line_id'] = ''
-    session['user_name'] = ''
+    line_id = json.loads(str(event.source))['userId']
+    user_name = line_bot_api.get_profile(line_id).display_name # 取得line名稱    
+    session['line_id'] = line_id
+    session['user_name'] = user_name
+    print("0.handle_message    line_id:",session['line_id'],",user_name:",session['user_name'])
     if event.message.text == "pay":
-        print(str(event)) 
+        #print(str(event)) 
         #tmp_obj = json.loads(str(event.source))
         #line_id = str(tmp_obj['userId'])
         line_id = json.loads(str(event.source))['userId']
