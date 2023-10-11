@@ -108,7 +108,7 @@ def get_flex_message_content(user_name,order_id):
                     "action": {
                     "type": "uri",
                     "label": "點我付款",
-                    "uri": "gpt-linebot-python-flask-on-vercel-puce-two.vercel.app/ecpay"
+                    "uri": "https://gpt-linebot-python-flask-on-vercel-puce-two.vercel.app/ecpay"
                     }
                 },
                 {
