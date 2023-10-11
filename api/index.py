@@ -54,7 +54,7 @@ def ecpay():
         'ItemName': 'AI敏捷專家Line諮詢(1小時)',
         'ReturnURL': 'https://gpt-linebot-python-flask-on-vercel-puce-two.vercel.app/',  #'https://www.ecpay.com.tw/return_url.php',
         'ChoosePayment': 'ALL',
-        'ClientBackURL': 'https://tw.yahoo.com/', #'https://www.ecpay.com.tw/client_back_url.php',
+        'ClientBackURL': 'https://www.ecpay.com.tw/client_back_url.php', # 'https://tw.yahoo.com/',
         'ItemURL': 'https://www.ecpay.com.tw/item_url.php',
         'Remark': '交易備註',
         'ChooseSubPayment': '',
