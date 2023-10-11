@@ -35,7 +35,7 @@ def home():
 # ReturnURL: 綠界 Server 端回傳 (POST) 
 @app.route('/receive_result', methods=['POST'])
 def receive_result():
-    print("3.receive_result  order_id:",session['order_id'],',line_id:',session['line_id'],',user_name:',session['user_name'])
+    print("3.receive_result  order_id:",CACHE["order_id"],',line_id:',session['line_id'],',user_name:',session['user_name'])
     """
     result = request.form['RtnMsg']
     tid = request.form['CustomField1']
@@ -58,13 +58,13 @@ def ecpay():
     """
     host_name = request.host_url
     #MerchantTradeNo = request.args.get("MerchantTradeNo")
-    print("2.ecpay  order_id:",session['order_id'],",host_name:",host_name)
+    print("2.ecpay  order_id:",CACHE["order_id"],",host_name:",host_name)
     #user_name = request.args.get("user_name")
     #print('MerchantTradeNo:',MerchantTradeNo )
     order_params = {
         #'line_id': line_id,
         #'user_name': user_name,
-        'MerchantTradeNo': session['order_id'], #datetime.now().strftime("NO%Y%m%d%H%M%S"),
+        'MerchantTradeNo': CACHE["order_id"], #session['order_id'], #datetime.now().strftime("NO%Y%m%d%H%M%S"),
         'StoreID': '',
         'MerchantTradeDate': datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
