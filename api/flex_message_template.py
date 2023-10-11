@@ -1,4 +1,4 @@
-def get_flex_message_content(user_name,order_id):
+def get_flex_message_content(line_id,user_name,order_id):
     return {
             "type": "bubble",
             "hero": {
@@ -108,7 +108,7 @@ def get_flex_message_content(user_name,order_id):
                     "action": {
                     "type": "uri",
                     "label": "綠界(ECPay)付款",
-                    "uri": "https://gpt-linebot-python-flask-on-vercel-puce-two.vercel.app/ecpay"
+                    "uri": "https://gpt-linebot-python-flask-on-vercel-puce-two.vercel.app/ecpay?line_id="+line_id+"&user_name="+user_name
                     }
                 },
                 {
