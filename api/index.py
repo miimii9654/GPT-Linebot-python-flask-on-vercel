@@ -5,7 +5,7 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage, FlexSendM
 from linepay import LinePayApi
 from api.chatgpt import ChatGPT
 from api.flex_message_template import get_flex_message_content
-import api.ecpay_payment_sdk as ecpay
+import api.ecpay_payment_sdk #as ecpay
 import json
 import os
 import uuid
@@ -103,7 +103,7 @@ def ecpay():
     }
     
     # 建立實體
-    ecpay_payment_sdk = ecpay.ECPayPaymentSdk(
+    ecpay_payment_sdk = ECPayPaymentSdk(
         MerchantID='2000132',
         HashKey='5294y06JbISpM5x9',
         HashIV='v77hoKGq4kWxNNIS'
