@@ -198,7 +198,7 @@ def pay(line_id,user_name):
     currency = "TWD"
     CACHE["order_id"] = order_id
     session['order_id'] = order_id
-    print("1.pay  order_id:",order_id,',line_id:',line_id,',user_name:',user_name)
+    print("1.pay  order_id:",session['order_id'],',line_id:',line_id,',user_name:',user_name)
     CACHE["amount"] = amount
     CACHE["currency"] = currency
     
