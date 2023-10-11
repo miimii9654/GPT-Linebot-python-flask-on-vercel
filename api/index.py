@@ -42,7 +42,7 @@ def ecpay():
     #MerchantTradeNo = request.args.get("MerchantTradeNo")
     print("order_id:",CACHE["order_id"])
     #user_name = request.args.get("user_name")
-    print('MerchantTradeNo:',MerchantTradeNo )
+    #print('MerchantTradeNo:',MerchantTradeNo )
     order_params = {
         #'line_id': line_id,
         #'user_name': user_name,
