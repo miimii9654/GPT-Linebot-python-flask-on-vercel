@@ -52,8 +52,9 @@ def ecpay():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     """
+    host_name = request.host_url
     #MerchantTradeNo = request.args.get("MerchantTradeNo")
-    print("2.ecpay  order_id:",CACHE["order_id"])
+    print("2.ecpay  order_id:",CACHE["order_id"],",host_name:",host_name)
     #user_name = request.args.get("user_name")
     #print('MerchantTradeNo:',MerchantTradeNo )
     order_params = {
