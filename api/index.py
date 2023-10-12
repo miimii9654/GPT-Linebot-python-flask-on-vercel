@@ -228,9 +228,10 @@ def ecpay():
         #print(html)
 
         # 建立交易order_id
+        print('建立交易order_id:', session['line_id'])
         conn = psycopg2.connect(conn_string) 
         cur = conn.cursor()
-        cur.execute("insert into aism_pay(line_id, order_id, created_on) values (%s, %s, (NOW() + interval '8 hour'))  ",(CACHE["line_id"], order_id))
+        cur.execute("insert into aism_pay(line_id, order_id, created_on) values (%s, %s, (NOW() + interval '8 hour'))  ",(session['line_id'], order_id))
         cur.execute("commit")    
         cur.close()
         conn.close()
