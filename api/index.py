@@ -39,7 +39,11 @@ def home():
     sslmode = "require"    
     conn_string = "host={0} user={1} dbname={2} password={3} sslmode={4}".format(host, user, dbname, password, sslmode)
     conn = psycopg2.connect(conn_string) 
-    return 'Hello, World! Connection established 1'
+    cur = conn.cursor()
+    cur.execute("select count(1) from verceldb.aism_accounts")
+    for r in cur :
+        c=str(r[0])
+    return 'Hello, World! Connection established '+c
 
 # return_url: 綠界 Server 端回傳 (POST) 
 @app.route('/return_url', methods=['POST'])
