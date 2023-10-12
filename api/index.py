@@ -12,7 +12,7 @@ import uuid
 
 import importlib.util
 from datetime import datetime,timedelta
-#import psycopg2
+import psycopg2
 
 LINE_PAY_CHANNEL_ID = os.getenv("LINE_PAY_CHANNEL_ID")
 LINE_PAY_CHANNEL_SECRET = os.getenv("LINE_CHANNEL_SECRET")
