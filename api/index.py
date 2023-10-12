@@ -31,7 +31,15 @@ CACHE = {} #付款用
 # domain root
 @app.route('/')
 def home():
-    return 'Hello, World!'
+    host = "ep-solitary-glade-75192711.us-east-1.postgres.vercel-storage.com:5432"
+    dbname = "verceldb"
+    user = "default"
+    password = "9l5YHtOCTyRJ"
+    sslmode = "require"    
+    conn_string = "host={0} user={1} dbname={2} password={3} sslmode={4}".format(host, user, dbname, password, sslmode)
+    conn = psycopg2.connect(conn_string)
+    print("Connection established")
+    return 'Hello, World! Connection established'
 
 # return_url: 綠界 Server 端回傳 (POST) 
 @app.route('/return_url', methods=['POST'])
