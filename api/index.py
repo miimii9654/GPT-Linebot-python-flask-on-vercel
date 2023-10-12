@@ -116,8 +116,8 @@ def order_result_url():
     db.session.commit()
     """
     if RtnMsg == 'Succeeded' :
-        start_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        end_time = (datetime.now() + timedelta(minutes=15)).strftime('%Y-%m-%d %H:%M:%S')
+        start_time = (datetime.now()+timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
+        end_time = (datetime.now() +timedelta(hours=8) + timedelta(minutes=15)).strftime('%Y-%m-%d %H:%M:%S')
         html = '<h1>訂單編號:'+order_id+'</h1><h1>恭喜您付款成功，您可開始跟AI敏捷專家對話，使用的時間區間為一小時</h1><h2>開始時間:'+start_time+'</h2><h2>結束時間:'+end_time+'</h2>'
     else :
         html = '<h1>訂單編號:'+order_id+'</h1><h1>很抱歉您的付款沒有成功</h1><h2>錯誤訊息:'+RtnMsg+'</h2>step:order_result_url'
