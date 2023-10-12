@@ -217,10 +217,10 @@ def ecpay():
     order_params.update(inv_params)
 
     # 建立交易order_id
-    print('建立交易order_id:', session['line_id'])
+    print('建立交易order_id:',order_id,',   line_id:', CACHE["line_id"]  )
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
-    cur.execute("insert into aism_pay(line_id, order_id, created_on) values (%s, %s, (NOW() + interval '8 hour'))  ",(session['line_id'], order_id))
+    cur.execute("insert into aism_pay(line_id, order_id, created_on) values (%s, %s, (NOW() + interval '8 hour'))  ",(CACHE['line_id'], order_id))
     cur.execute("commit")    
     cur.close()
     conn.close()
@@ -315,7 +315,8 @@ def handle_message(event):
             TextSendMessage(text="我可以說話囉，歡迎來跟我互動 ^_^ "))
         return
     line_id = json.loads(str(event.source))['userId']
-    user_name = line_bot_api.get_profile(line_id).display_name # 取得line名稱    
+    user_name = line_bot_api.get_profile(line_id).display_name # 取得line名稱
+    CACHE["line_id"] = line_id
     session['line_id'] = line_id
     session['user_name'] = user_name
     
