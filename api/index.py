@@ -37,9 +37,8 @@ def home():
     password = "9l5YHtOCTyRJ"
     sslmode = "require"    
     conn_string = "host={0} user={1} dbname={2} password={3} sslmode={4}".format(host, user, dbname, password, sslmode)
-    #conn = psycopg2.connect(conn_string)
-    print("Connection established")
-    return 'Hello, World! Connection established'
+    conn = psycopg2.connect(conn_string) 
+    return 'Hello, World! Connection established 1'
 
 # return_url: 綠界 Server 端回傳 (POST) 
 @app.route('/return_url', methods=['POST'])
