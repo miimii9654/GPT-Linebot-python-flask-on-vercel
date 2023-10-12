@@ -41,6 +41,7 @@ useable_minutes = 15
 # domain root
 @app.route('/')
 def home():
+    """
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
     created_on = ''
@@ -53,7 +54,9 @@ def home():
         diff_minutes = (current_time - datetime.strptime(created_on, '%Y/%m/%d %H:%M:%S')).total_seconds() / 60
     cur.close()
     conn.close()    
-    return 'Hello, World!  <br>最近付款成功時間:'+created_on+',<br>current_time:'+current_time.strftime('%Y/%m/%d %H:%M:%S')+',<br>差距時間:'+str(diff_minutes)+'分鐘'
+    """
+    #return 'Hello, World!  <br>最近付款成功時間:'+created_on+',<br>current_time:'+current_time.strftime('%Y/%m/%d %H:%M:%S')+',<br>差距時間:'+str(diff_minutes)+'分鐘'
+    return 'Hello, World!'
 
 # return_url: 綠界 Server 端回傳 (POST) 
 @app.route('/return_url', methods=['POST'])
