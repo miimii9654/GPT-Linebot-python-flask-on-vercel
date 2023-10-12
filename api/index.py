@@ -59,14 +59,14 @@ def return_url():
     order_id = request.form['MerchantTradeNo']
     print('3.return_url  order_id =>',order_id)
 
-    # 紀錄交易結果
+    # 更新交易結果
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
-    #cur.execute("insert  aism_accounts")
-    cur.execute("insert into aism_pay(line_id, order_id, rtnmsg, created_on) values (%s, %s, %s,(NOW() + interval '8 hour'))  ",(line_id, order_id, RtnMsg))
+    cur.execute("update aism_pay set rtnmsg=%s where order_id=%s",(RtnMsg, order_id))    
     cur.execute("commit")    
     cur.close()
     conn.close()
+    
     """
     result = request.form['RtnMsg']
     tid = request.form['CustomField1']
@@ -84,14 +84,11 @@ def order_result_url():
     #print("4.order_result_url  order_id:",CACHE["order_id"],',line_id:',CACHE['line_id'],',user_name:',CACHE['user_name'])
     print(RtnMsg)
     order_id = request.form['MerchantTradeNo']
-    print('4.order_result_url   order_id =>',order_id)
-    #print('session line_id:', session['line_id'])
-    print('CACHE line_id:', CACHE['line_id'])
-    # 紀錄交易結果
+    print('4.order_result_url   order_id =>',order_id)     
+    # 更新交易結果
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
-    #cur.execute("insert  aism_accounts")
-    cur.execute("insert into aism_pay(line_id, order_id, rtnmsg, created_on) values (%s, %s, %s,(NOW() + interval '8 hour'))  ",(CACHE['line_id'], order_id, RtnMsg))
+    cur.execute("update aism_pay set rtnmsg=%s where order_id=%s",(RtnMsg, order_id))
     cur.execute("commit")    
     cur.close()
     conn.close()
@@ -231,6 +228,14 @@ def ecpay():
         html = ecpay_payment_sdk.gen_html_post_form(action_url, final_order_params)
         html = '<html><body>'+html+'</body></html>'
         #print(html)
+
+        # 建立交易order_id
+        conn = psycopg2.connect(conn_string) 
+        cur = conn.cursor()
+        cur.execute("insert into aism_pay(line_id, order_id, created_on) values (%s, %s, (NOW() + interval '8 hour'))  ",(line_id, order_id))
+        cur.execute("commit")    
+        cur.close()
+        conn.close()
         return html
     except Exception as error:
         print('An exception happened: ' + str(error))
