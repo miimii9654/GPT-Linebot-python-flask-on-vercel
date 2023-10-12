@@ -216,14 +216,7 @@ def ecpay():
     # 合併發票參數
     order_params.update(inv_params)
 
-    # 建立交易order_id
-    print('建立交易order_id:',CACHE["order_id"],',   line_id:', CACHE["line_id"]  )
-    conn = psycopg2.connect(conn_string) 
-    cur = conn.cursor()
-    cur.execute("insert into aism_pay(line_id, order_id, created_on) values (%s, %s, (NOW() + interval '8 hour'))  ",(CACHE['line_id'], order_id))
-    cur.execute("commit")    
-    cur.close()
-    conn.close()
+    
     
     try:
         # 產生綠界訂單所需參數
@@ -235,7 +228,14 @@ def ecpay():
         html = ecpay_payment_sdk.gen_html_post_form(action_url, final_order_params)
         html = '<html><body>'+html+'</body></html>'
         #print(html)
-
+        # 建立交易order_id
+        print('建立交易order_id:',CACHE["order_id"],',   line_id:', CACHE["line_id"]  )
+        conn = psycopg2.connect(conn_string) 
+        cur = conn.cursor()
+        cur.execute("insert into aism_pay(line_id, order_id, created_on) values (%s, %s, (NOW() + interval '8 hour'))  ",(CACHE['line_id'], CACHE["order_id"]))
+        cur.execute("commit")    
+        cur.close()
+        conn.close()
         
         return html
     except Exception as error:
