@@ -36,6 +36,7 @@ conn_string = "host={0} user={1} dbname={2} password={3} sslmode={4}".format(hos
 
 chatgpt = ChatGPT()
 CACHE = {} #付款用
+useable_minutes = 15
 
 # domain root
 @app.route('/')
@@ -52,7 +53,7 @@ def home():
         diff_minutes = (current_time - datetime.strptime(created_on, '%Y/%m/%d %H:%M:%S')).total_seconds() / 60
     cur.close()
     conn.close()    
-    return 'Hello, World!  <br>最近付款成功時間:'+created_on+',<br>current_time:'+current_time.strftime('%Y/%m/%d %H:%M:%S')+',<br>差距時間:'+str(diff_minutes)
+    return 'Hello, World!  <br>最近付款成功時間:'+created_on+',<br>current_time:'+current_time.strftime('%Y/%m/%d %H:%M:%S')+',<br>差距時間:'+str(diff_minutes)+'分鐘'
 
 # return_url: 綠界 Server 端回傳 (POST) 
 @app.route('/return_url', methods=['POST'])
@@ -322,13 +323,26 @@ def pay(line_id,user_name):
 def check_useable(line_id):
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
-    cur.execute("select created_on from aism_pay where rtnmsg='Succeeded' order by created_on desc LIMIT 1")
+    created_on = ''
+    cur.execute("select TO_CHAR(created_on, 'YYYY/MM/DD HH24:MM:SS') from aism_pay where rtnmsg='Succeeded' where line_id=%s order by created_on desc LIMIT 1",(line_id))
     for r in cur :
-        created_on=r[0]        
-    cur.close()
-    conn.close()
+        created_on=r[0]         
+    current_time = datetime.now() + timedelta(hours=8)
+     
+    if created_on != '':        
+        diff_minutes = (current_time - datetime.strptime(created_on, '%Y/%m/%d %H:%M:%S')).total_seconds() / 60
+        if diff_minutes > useable_minutes :
+            print('diff_minutes:',diff_minutes,',超過useable_minutes:',useable_minutes)
+            useable = 2 # over useable_minutes
+        else :    
+            useable = 1 # in useable_minutes
+    else :
+        useable = 3 # not pay
     
-    return 
+    cur.close()
+    conn.close() 
+    
+    return useable
 
 
 @line_handler.add(MessageEvent, message=TextMessage)
@@ -353,14 +367,11 @@ def handle_message(event):
     conn.close()
     
     print("0.handle_message    line_id:",session['line_id'],",user_name:",session['user_name'])
-    if event.message.text == "p":
-        #print(str(event)) 
-        #tmp_obj = json.loads(str(event.source))
-        #line_id = str(tmp_obj['userId'])
-        #line_id = json.loads(str(event.source))['userId']
-        #user_name = line_bot_api.get_profile(line_id).display_name # 取得line名稱
-        #profile
-        pay(line_id,user_name)       
+    #if event.message.text == "p":
+    if event.message.type == "text":    
+        useable = check_useable(line_id)
+        if useable != 1 :
+            pay(line_id,user_name)       
         return
          
 
