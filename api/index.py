@@ -296,10 +296,9 @@ def handle_message(event):
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
     #cur.execute("insert  aism_accounts")
-    #insert into aism_accounts(line_id, user_name, created_on) values (%s, %s, 'Awesome') on conflict (title, body) do nothing;
+    cur.execute("insert into aism_accounts(line_id, user_name, created_on) values (%s, %s, (NOW() + interval '8 hour')) on conflict (line_id) do nothing",(line_id,user_name))
+    cur.execute("commit")
     
-    for r in cur :
-        c=str(r[0])
     cur.close()
     conn.close()
     print("0.handle_message    line_id:",session['line_id'],",user_name:",session['user_name'])
