@@ -118,8 +118,6 @@ def ecpay():
     #user_name = request.args.get("user_name")
     #print('MerchantTradeNo:',MerchantTradeNo )
     order_params = {
-        #'line_id': line_id,
-        #'user_name': user_name,
         'MerchantTradeNo': CACHE["order_id"], #session['order_id'], #datetime.now().strftime("NO%Y%m%d%H%M%S"),
         'StoreID': '',
         'MerchantTradeDate': datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
@@ -232,7 +230,7 @@ def ecpay():
         # 建立交易order_id
         conn = psycopg2.connect(conn_string) 
         cur = conn.cursor()
-        cur.execute("insert into aism_pay(line_id, order_id, created_on) values (%s, %s, (NOW() + interval '8 hour'))  ",(CACHE["order_id"], order_id))
+        cur.execute("insert into aism_pay(line_id, order_id, created_on) values (%s, %s, (NOW() + interval '8 hour'))  ",(CACHE["line_id"], order_id))
         cur.execute("commit")    
         cur.close()
         conn.close()
