@@ -42,13 +42,12 @@ CACHE = {} #付款用
 def home():
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
-    cur.execute("select count(1) from aism_accounts")
-    cur.execute("select (NOW() + interval '8 hour')")
+    cur.execute("select age((NOW() + interval '8 hour'),created_on) from aism_pay where order_id = 'NO20231012060800'")
     for r in cur :
         c=str(r[0])
     cur.close()
     conn.close()    
-    return 'Hello, World! aism_accounts count: '+c
+    return 'Hello, World!  '+c
 
 # return_url: 綠界 Server 端回傳 (POST) 
 @app.route('/return_url', methods=['POST'])
