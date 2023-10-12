@@ -85,7 +85,7 @@ def order_result_url():
     print(RtnMsg)
     order_id = request.form['MerchantTradeNo']
     print('4.order_result_url   order_id =>',order_id)
-    print('session line_id:', session['line_id'])
+    #print('session line_id:', session['line_id'])
     print('CACHE line_id:', CACHE['line_id'])
     # 紀錄交易結果
     conn = psycopg2.connect(conn_string) 
