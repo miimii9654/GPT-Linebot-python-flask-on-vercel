@@ -43,13 +43,13 @@ def home():
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
     created_on = ''
-    cur.execute("select created_on from aism_pay where rtnmsg='Succeeded' order by created_on desc LIMIT 1")
+    cur.execute("select TO_CHAR(created_on, 'YYYY/MM/DD HH12:MM:SS') from aism_pay where rtnmsg='Succeeded' order by created_on desc LIMIT 1")
     for r in cur :
         created_on=r[0]         
     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     diff_minutes = 0
     if created_on != '':        
-        diff_minutes = (current_time - created_on).total_seconds() / 60
+        diff_minutes = (current_time - datetime.strptime(created_on, '%Y-%m-%d %H:%M:%S')).total_seconds() / 60
     cur.close()
     conn.close()    
     return 'Hello, World!  最近付款成功時間:'+created_on+',current_time'+current_time+',差距時間:'+str(diff_minutes)
