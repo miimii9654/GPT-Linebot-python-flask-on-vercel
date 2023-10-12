@@ -114,7 +114,7 @@ def ecpay():
     """
     host_name = request.host_url
     #MerchantTradeNo = request.args.get("MerchantTradeNo")
-    print("22.ecpay  order_id:",CACHE["order_id"],",host_name:",host_name)
+    print("23.ecpay  order_id:",CACHE["order_id"],",host_name:",host_name)
     #user_name = request.args.get("user_name")
     #print('MerchantTradeNo:',MerchantTradeNo )
     order_params = {
@@ -215,6 +215,15 @@ def ecpay():
     
     # 合併發票參數
     order_params.update(inv_params)
+
+    # 建立交易order_id
+    print('建立交易order_id:', session['line_id'])
+    conn = psycopg2.connect(conn_string) 
+    cur = conn.cursor()
+    cur.execute("insert into aism_pay(line_id, order_id, created_on) values (%s, %s, (NOW() + interval '8 hour'))  ",(session['line_id'], order_id))
+    cur.execute("commit")    
+    cur.close()
+    conn.close()
     
     try:
         # 產生綠界訂單所需參數
@@ -227,14 +236,7 @@ def ecpay():
         html = '<html><body>'+html+'</body></html>'
         #print(html)
 
-        # 建立交易order_id
-        print('建立交易order_id:', session['line_id'])
-        conn = psycopg2.connect(conn_string) 
-        cur = conn.cursor()
-        cur.execute("insert into aism_pay(line_id, order_id, created_on) values (%s, %s, (NOW() + interval '8 hour'))  ",(session['line_id'], order_id))
-        cur.execute("commit")    
-        cur.close()
-        conn.close()
+        
         return html
     except Exception as error:
         print('An exception happened: ' + str(error))
