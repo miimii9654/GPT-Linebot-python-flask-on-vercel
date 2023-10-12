@@ -44,7 +44,7 @@ def home():
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
     created_on = ''
-    cur.execute("select TO_CHAR(created_on, 'YYYY/MM/DD HH24:Mi:SS') from aism_pay where rtnmsg='Succeeded' order by created_on desc LIMIT 1")
+    cur.execute("select TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_pay where rtnmsg='Succeeded' order by created_on desc LIMIT 1")
     for r in cur :
         created_on=r[0]         
     current_time = datetime.now() + timedelta(hours=8)
