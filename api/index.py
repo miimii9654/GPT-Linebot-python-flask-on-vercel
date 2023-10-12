@@ -54,10 +54,19 @@ def home():
 @app.route('/return_url', methods=['POST'])
 def return_url():
     #print("3.receive_result  order_id:",CACHE["order_id"],',line_id:',session['line_id'],',user_name:',session['user_name'])
-    result = request.form['RtnMsg']
-    print(result)
+    RtnMsg = request.form['RtnMsg']
+    print(RtnMsg)
     order_id = request.form['MerchantTradeNo']
     print('3.return_url  order_id =>',order_id)
+
+    # 紀錄交易結果
+    conn = psycopg2.connect(conn_string) 
+    cur = conn.cursor()
+    #cur.execute("insert  aism_accounts")
+    cur.execute("insert into aism_pay(line_id, order_id, rtnmsg, created_on) values (%s, %s, %s,(NOW() + interval '8 hour'))  ",(line_id, order_id, RtnMsg))
+    cur.execute("commit")    
+    cur.close()
+    conn.close()
     """
     result = request.form['RtnMsg']
     tid = request.form['CustomField1']
@@ -76,6 +85,15 @@ def order_result_url():
     print(RtnMsg)
     order_id = request.form['MerchantTradeNo']
     print('4.order_result_url   order_id =>',order_id)
+    
+    # 紀錄交易結果
+    conn = psycopg2.connect(conn_string) 
+    cur = conn.cursor()
+    #cur.execute("insert  aism_accounts")
+    cur.execute("insert into aism_pay(line_id, order_id, rtnmsg, created_on) values (%s, %s, %s,(NOW() + interval '8 hour'))  ",(line_id, order_id, RtnMsg))
+    cur.execute("commit")    
+    cur.close()
+    conn.close()
     """
     result = request.form['RtnMsg']
     tid = request.form['CustomField1']
@@ -293,14 +311,16 @@ def handle_message(event):
     user_name = line_bot_api.get_profile(line_id).display_name # 取得line名稱    
     session['line_id'] = line_id
     session['user_name'] = user_name
+    
+    # 紀錄user
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
     #cur.execute("insert  aism_accounts")
     cur.execute("insert into aism_accounts(line_id, user_name, created_on) values (%s, %s, (NOW() + interval '8 hour')) on conflict (line_id) do nothing",(line_id,user_name))
-    cur.execute("commit")
-    
+    cur.execute("commit")    
     cur.close()
     conn.close()
+    
     print("0.handle_message    line_id:",session['line_id'],",user_name:",session['user_name'])
     if event.message.text == "pay":
         #print(str(event)) 
