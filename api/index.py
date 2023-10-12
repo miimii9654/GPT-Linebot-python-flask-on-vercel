@@ -31,7 +31,8 @@ CACHE = {} #付款用
 # domain root
 @app.route('/')
 def home():
-    host = "ep-solitary-glade-75192711.us-east-1.postgres.vercel-storage.com:5432"
+    #host = "ep-solitary-glade-75192711.us-east-1.postgres.vercel-storage.com:5432"
+    host = "ep-solitary-glade-75192711.us-east-1.postgres.vercel-storage.com"
     dbname = "verceldb"
     user = "default"
     password = "9l5YHtOCTyRJ"
