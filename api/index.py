@@ -371,8 +371,9 @@ def handle_message(event):
     #if event.message.text == "p":
     if event.message.type == "text":    
         useable = check_useable(line_id)
-        #useable = '1'
-        if useable != '1' :
+        print('useable ==> ',useable)
+        #useable = 1
+        if useable != 1 :
             pay(line_id,user_name)       
             return
         
