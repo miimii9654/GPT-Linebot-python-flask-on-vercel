@@ -52,7 +52,7 @@ def home():
         diff_minutes = (current_time - datetime.strptime(created_on, '%Y/%m/%d %H:%M:%S')).total_seconds() / 60
     cur.close()
     conn.close()    
-    return 'Hello, World!  最近付款成功時間:'+created_on+',current_time'+current_time+',差距時間:'+str(diff_minutes)
+    return 'Hello, World!  最近付款成功時間:'+created_on+',current_time'+current_time.strftime('%Y/%m/%d %H:%M:%S')+',差距時間:'+str(diff_minutes)
 
 # return_url: 綠界 Server 端回傳 (POST) 
 @app.route('/return_url', methods=['POST'])
