@@ -43,7 +43,7 @@ def home():
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
     cur.execute("select count(1) from aism_accounts")
-    cur.execute("select now()")
+    cur.execute("select (NOW() + interval '8 hour')")
     for r in cur :
         c=str(r[0])
     cur.close()
