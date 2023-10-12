@@ -46,7 +46,7 @@ def home():
     cur.execute("select TO_CHAR(created_on, 'YYYY/MM/DD HH24:MM:SS') from aism_pay where rtnmsg='Succeeded' order by created_on desc LIMIT 1")
     for r in cur :
         created_on=r[0]         
-    current_time = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+    current_time = datetime.now()
     diff_minutes = 0
     if created_on != '':        
         diff_minutes = (current_time - datetime.strptime(created_on, '%Y/%m/%d %H:%M:%S')).total_seconds() / 60
