@@ -7,3 +7,4 @@ line-pay==0.1.0
 requests
 python-dotenv==0.10.3
 
+psycopg2
