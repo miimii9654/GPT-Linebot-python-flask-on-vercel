@@ -217,7 +217,7 @@ def ecpay():
     order_params.update(inv_params)
 
     # 建立交易order_id
-    print('建立交易order_id:',order_id,',   line_id:', CACHE["line_id"]  )
+    print('建立交易order_id:',CACHE["order_id"],',   line_id:', CACHE["line_id"]  )
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
     cur.execute("insert into aism_pay(line_id, order_id, created_on) values (%s, %s, (NOW() + interval '8 hour'))  ",(CACHE['line_id'], order_id))
@@ -330,7 +330,7 @@ def handle_message(event):
     conn.close()
     
     print("0.handle_message    line_id:",session['line_id'],",user_name:",session['user_name'])
-    if event.message.text == "pay":
+    if event.message.text == "p":
         #print(str(event)) 
         #tmp_obj = json.loads(str(event.source))
         #line_id = str(tmp_obj['userId'])
