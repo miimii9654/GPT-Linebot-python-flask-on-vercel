@@ -12,7 +12,7 @@ import uuid
 
 import importlib.util
 from datetime import datetime,timedelta
-import psycopg2
+#import psycopg2
 
 LINE_PAY_CHANNEL_ID = os.getenv("LINE_PAY_CHANNEL_ID")
 LINE_PAY_CHANNEL_SECRET = os.getenv("LINE_CHANNEL_SECRET")
@@ -37,7 +37,7 @@ def home():
     password = "9l5YHtOCTyRJ"
     sslmode = "require"    
     conn_string = "host={0} user={1} dbname={2} password={3} sslmode={4}".format(host, user, dbname, password, sslmode)
-    conn = psycopg2.connect(conn_string)
+    #conn = psycopg2.connect(conn_string)
     print("Connection established")
     return 'Hello, World! Connection established'
 
