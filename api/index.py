@@ -25,25 +25,30 @@ app = Flask(__name__)
 app.secret_key = 'super secret string'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=31)
 
+# db setting
+host = "ep-solitary-glade-75192711.us-east-1.postgres.vercel-storage.com"
+dbname = "verceldb"
+user = "default"
+password = "9l5YHtOCTyRJ"
+sslmode = "require"
+port = "5432"
+conn_string = "host={0} user={1} dbname={2} password={3} sslmode={4}".format(host, user, dbname, password, sslmode)
+
 chatgpt = ChatGPT()
 CACHE = {} #付款用
 
 # domain root
 @app.route('/')
 def home():
-    #host = "ep-solitary-glade-75192711.us-east-1.postgres.vercel-storage.com:5432"
-    host = "ep-solitary-glade-75192711.us-east-1.postgres.vercel-storage.com"
-    dbname = "verceldb"
-    user = "default"
-    password = "9l5YHtOCTyRJ"
-    sslmode = "require"    
-    conn_string = "host={0} user={1} dbname={2} password={3} sslmode={4}".format(host, user, dbname, password, sslmode)
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
     cur.execute("select count(1) from aism_accounts")
+    cur.execute("select now()")
     for r in cur :
         c=str(r[0])
-    return 'Hello, World! Connection established '+c
+    cur.close()
+    conn.close()    
+    return 'Hello, World! aism_accounts count: '+c
 
 # return_url: 綠界 Server 端回傳 (POST) 
 @app.route('/return_url', methods=['POST'])
@@ -288,6 +293,15 @@ def handle_message(event):
     user_name = line_bot_api.get_profile(line_id).display_name # 取得line名稱    
     session['line_id'] = line_id
     session['user_name'] = user_name
+    conn = psycopg2.connect(conn_string) 
+    cur = conn.cursor()
+    #cur.execute("insert  aism_accounts")
+    #insert into aism_accounts(line_id, user_name, created_on) values (%s, %s, 'Awesome') on conflict (title, body) do nothing;
+    
+    for r in cur :
+        c=str(r[0])
+    cur.close()
+    conn.close()
     print("0.handle_message    line_id:",session['line_id'],",user_name:",session['user_name'])
     if event.message.text == "pay":
         #print(str(event)) 
