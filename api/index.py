@@ -85,12 +85,13 @@ def order_result_url():
     print(RtnMsg)
     order_id = request.form['MerchantTradeNo']
     print('4.order_result_url   order_id =>',order_id)
-    
+    print('session line_id:', session['line_id'])
+    print('CACHE line_id:', CACHE['line_id'])
     # 紀錄交易結果
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
     #cur.execute("insert  aism_accounts")
-    cur.execute("insert into aism_pay(line_id, order_id, rtnmsg, created_on) values (%s, %s, %s,(NOW() + interval '8 hour'))  ",(line_id, order_id, RtnMsg))
+    cur.execute("insert into aism_pay(line_id, order_id, rtnmsg, created_on) values (%s, %s, %s,(NOW() + interval '8 hour'))  ",(CACHE['line_id'], order_id, RtnMsg))
     cur.execute("commit")    
     cur.close()
     conn.close()
