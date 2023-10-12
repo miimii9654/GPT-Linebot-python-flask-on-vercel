@@ -329,7 +329,7 @@ def check_useable(line_id):
     for r in cur :
         created_on=r[0]         
     current_time = datetime.now() + timedelta(hours=8)
-     
+    print('check_useable  current_time:',current_time.strftime("%Y/%m/%d %H:%M:%S"),',created_on:',created_on) 
     if created_on != '':        
         diff_minutes = (current_time - datetime.strptime(created_on, '%Y/%m/%d %H:%M:%S')).total_seconds() / 60
         if diff_minutes > useable_minutes :
