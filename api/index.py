@@ -42,12 +42,17 @@ CACHE = {} #付款用
 def home():
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
-    cur.execute("select age((NOW() + interval '8 hour'),created_on) from aism_pay where order_id = 'NO20231012060800'")
+    created_on = ''
+    cur.execute("select created_on from aism_pay where rtnmsg='Succeeded' order by created_on desc LIMIT 1")
     for r in cur :
-        c=str(r[0])
+        created_on=r[0]         
+    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    diff_minutes = 0
+    if created_on != '':        
+        diff_minutes = (current_time - created_on).total_seconds() / 60
     cur.close()
     conn.close()    
-    return 'Hello, World!  '+c
+    return 'Hello, World!  最近付款成功時間:'+created_on+',current_time'+current_time+',差距時間:'+str(diff_minutes)
 
 # return_url: 綠界 Server 端回傳 (POST) 
 @app.route('/return_url', methods=['POST'])
@@ -313,19 +318,25 @@ def pay(line_id,user_name):
                         alt_text='hello',
                         contents=flex_content
                     ))
+
+def check_useable(line_id):
+    conn = psycopg2.connect(conn_string) 
+    cur = conn.cursor()
+    cur.execute("select created_on from aism_pay where rtnmsg='Succeeded' order by created_on desc LIMIT 1")
+    for r in cur :
+        created_on=r[0]        
+    cur.close()
+    conn.close()
     
+    return 
+
+
 @line_handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     global working_status
     if event.message.type != "text":
         return
     
-    if event.message.text == "說話":
-        working_status = True
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text="我可以說話囉，歡迎來跟我互動 ^_^ "))
-        return
     line_id = json.loads(str(event.source))['userId']
     user_name = line_bot_api.get_profile(line_id).display_name # 取得line名稱
     CACHE["line_id"] = line_id
@@ -351,21 +362,7 @@ def handle_message(event):
         #profile
         pay(line_id,user_name)       
         return
-        
-    if event.message.text == "閉嘴":
-        working_status = False
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text="好的，我乖乖閉嘴 > <，如果想要我繼續說話，請跟我說 「說話」 > <"))
-        return
-
-    if working_status:
-        chatgpt.add_msg(f"HUMAN:{event.message.text}?\n")
-        reply_msg = chatgpt.get_response().replace("AI:", "", 1)
-        chatgpt.add_msg(f"AI:{reply_msg}\n")
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=reply_msg))
+         
 
 
 if __name__ == "__main__":
