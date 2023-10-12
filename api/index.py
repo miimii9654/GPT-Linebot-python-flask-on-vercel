@@ -55,14 +55,14 @@ def home():
 def return_url():
     #print("3.receive_result  order_id:",CACHE["order_id"],',line_id:',session['line_id'],',user_name:',session['user_name'])
     RtnMsg = request.form['RtnMsg']
-    print(RtnMsg)
+    #print(RtnMsg)
     order_id = request.form['MerchantTradeNo']
-    print('3.return_url  order_id =>',order_id)
-
+    print('3.return_url  order_id =>',order_id,',RtnMsg:',RtnMsg)
+    
     # 更新交易結果
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
-    cur.execute("update aism_pay set rtnmsg=%s where order_id=%s",(RtnMsg, order_id))    
+    cur.execute("update aism_pay set rtnmsg=%s , created_on= (NOW() + interval '8 hour') where order_id=%s",(RtnMsg, order_id))    
     cur.execute("commit")    
     cur.close()
     conn.close()
@@ -75,7 +75,14 @@ def return_url():
     db.session.add(trade_detail)
     db.session.commit()
     """
-    return '3.return_url  order_id =>'+order_id+',RtnMsg:'+RtnMsg
+    
+    if RtnMsg == 'Succeeded' :
+        start_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        end_time = (datetime.now() + timedelta(minutes=15)).strftime('%Y-%m-%d %H:%M:%S')
+        html = '<h1>訂單編號:'+order_id+'</h1><h1>恭喜您付款成功，您可開始跟AI敏捷專家對話，使用的時間區間為一小時</h1><h2>開始時間:'+start_time+'</h2><h2>結束時間:'+end_time+'</h2>'
+    else :
+        html = '<h1>訂單編號:'+order_id+'</h1><h1>很抱歉您的付款沒有成功</h1><h2>錯誤訊息:'+RtnMsg+'</h2>step:return_url'
+    return html
 
 # order_result_url: 綠界 Server 端回傳 (POST) 失敗
 @app.route('/order_result_url', methods=['POST'])
@@ -88,7 +95,7 @@ def order_result_url():
     # 更新交易結果
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
-    cur.execute("update aism_pay set rtnmsg=%s where order_id=%s",(RtnMsg, order_id))
+    cur.execute("update aism_pay set rtnmsg=%s , created_on= (NOW() + interval '8 hour') where order_id=%s",(RtnMsg, order_id))  
     cur.execute("commit")    
     cur.close()
     conn.close()
@@ -100,7 +107,13 @@ def order_result_url():
     db.session.add(trade_detail)
     db.session.commit()
     """
-    return '4.order_result_url   order_id =>'+order_id+',RtnMsg:'+RtnMsg
+    if RtnMsg == 'Succeeded' :
+        start_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        end_time = (datetime.now() + timedelta(minutes=15)).strftime('%Y-%m-%d %H:%M:%S')
+        html = '<h1>訂單編號:'+order_id+'</h1><h1>恭喜您付款成功，您可開始跟AI敏捷專家對話，使用的時間區間為一小時</h1><h2>開始時間:'+start_time+'</h2><h2>結束時間:'+end_time+'</h2>'
+    else :
+        html = '<h1>訂單編號:'+order_id+'</h1><h1>很抱歉您的付款沒有成功</h1><h2>錯誤訊息:'+RtnMsg+'</h2>step:order_result_url'
+    return html
     
 @app.route("/ecpay", methods=['GET']) 
 def ecpay():
