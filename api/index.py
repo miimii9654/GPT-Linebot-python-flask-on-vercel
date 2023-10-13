@@ -34,14 +34,20 @@ useable_minutes = 15 #每次付款可使用幾分鐘
 # domain root
 @app.route('/')
 def home():
+    html = "<table><thead><tr>no</tr><tr>line_id</tr><tr>user_name</tr><tr>created_on</tr></thead><tbody>"
+ 
+    
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
-    cur.execute("select line_id,user_name,TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_accounts order by created_on desc LIMIT 10")
+    cur.execute("select line_id,user_name,TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_accounts order by created_on desc  ")
     i = 1
     for r in cur :
-        created_on=r[0] 
-        
-    
+        line_id=r[0]
+        user_name=r[1]
+        created_on=r[2] 
+        html = html+"<tr><td>"+str(i)+"</td><td>"+line_id+"</td><td>"+user_name+"</td><td>"+created_on+"</td></tr>"
+    html = html+"</tbody></table>"
+         
     """
     
     created_on = ''
@@ -72,7 +78,7 @@ def return_url():
     cur.execute("commit")    
     cur.close()
     conn.close()    
-    if RtnMsg == 'Succeeded' :
+    if RtnMsg == 'Succeeded' or RtnMsg == 'paid' :
         start_time = (datetime.now()+timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
         end_time = (datetime.now() +timedelta(hours=8) + timedelta(minutes=15)).strftime('%Y-%m-%d %H:%M:%S')
         html = '<h1>訂單編號:'+order_id+'</h1><h1>恭喜您付款成功，您可開始跟AI敏捷專家對話，使用的時間區間為一小時</h1><h2>開始時間:'+start_time+'</h2><h2>結束時間:'+end_time+'</h2>'
@@ -95,15 +101,7 @@ def order_result_url():
     cur.execute("commit")    
     cur.close()
     conn.close()
-    """
-    result = request.form['RtnMsg']
-    tid = request.form['CustomField1']
-    trade_detail = sql.Transaction.query.filter_by(tid=tid).first()
-    trade_detail.status = '交易成功 sever post'
-    db.session.add(trade_detail)
-    db.session.commit()
-    """
-    if RtnMsg == 'Succeeded' :
+    if RtnMsg == 'Succeeded' or RtnMsg == 'paid' :
         start_time = (datetime.now()+timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
         end_time = (datetime.now() +timedelta(hours=8) + timedelta(minutes=15)).strftime('%Y-%m-%d %H:%M:%S')
         html = '<h1>訂單編號:'+order_id+'</h1><h1>恭喜您付款成功，您可開始跟AI敏捷專家對話，使用的時間區間為一小時</h1><h2>開始時間:'+start_time+'</h2><h2>結束時間:'+end_time+'</h2>'
