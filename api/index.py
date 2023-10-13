@@ -122,12 +122,12 @@ def ecpay():
     spec.loader.exec_module(module)
     """
     host_name = request.host_url
-    #MerchantTradeNo = request.args.get("MerchantTradeNo")
-    print("23.ecpay  order_id:",CACHE["order_id"],",host_name:",host_name)
+    order_id = request.args.get("order_id")
+    print("23.ecpay  order_id:",order_id,",host_name:",host_name)
     #user_name = request.args.get("user_name")
     #print('MerchantTradeNo:',MerchantTradeNo )
     order_params = {
-        'MerchantTradeNo': CACHE["order_id"], #session['order_id'], #datetime.now().strftime("NO%Y%m%d%H%M%S"),
+        'MerchantTradeNo': order_id, #session['order_id'], #datetime.now().strftime("NO%Y%m%d%H%M%S"),
         'StoreID': '',
         'MerchantTradeDate': datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
@@ -315,8 +315,9 @@ def handle_message(event):
         useable = check_useable(line_id)
         print('useable ==> ',useable) 
         if useable != 1 : # 不可使用，跳出付費視窗
+            host_name = request.host_url
             order_id = datetime.now().strftime("NO%Y%m%d%H%M%S")     
-            flex_content = get_flex_message_content(line_id, user_name, order_id) # 設定flexmessage模板
+            flex_content = get_flex_message_content(host_name, user_name, order_id) # 設定flexmessage模板
             line_bot_api.push_message(line_id, FlexSendMessage(
                 alt_text='hello',
                 contents=flex_content
