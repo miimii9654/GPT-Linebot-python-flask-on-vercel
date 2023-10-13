@@ -34,20 +34,32 @@ useable_minutes = 15 #每次付款可使用幾分鐘
 # domain root
 @app.route('/')
 def home():
-    html = "<table><thead><tr>no</tr><tr>line_id</tr><tr>user_name</tr><tr>created_on</tr></thead><tbody>"
- 
-    
+    html = '<h2>aism_accounts</h2>'
+    html = html+"<table><thead><tr>no</tr><tr>line_id</tr><tr>user_name</tr><tr>created_on</tr></thead><tbody>"    
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
-    cur.execute("select line_id,user_name,TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_accounts order by created_on desc  ")
+    cur.execute("select line_id,user_name,TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_accounts order by created_on desc")
     i = 1
     for r in cur :
         line_id=r[0]
         user_name=r[1]
         created_on=r[2] 
         html = html+"<tr><td>"+str(i)+"</td><td>"+line_id+"</td><td>"+user_name+"</td><td>"+created_on+"</td></tr>"
+        i=i+1
     html = html+"</tbody></table>"
-         
+    
+    html = html+'<h2>aism_pay</h2>'
+    html = html+"<table><thead><tr>no</tr><tr>line_id</tr><tr>order_id</tr><tr>rtnmsg</tr><tr>created_on</tr></thead><tbody>"    
+    cur.execute("select line_id,order_id,rtnmsg,TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_pay order by created_on desc")
+    i = 1
+    for r in cur :
+        line_id=r[0]
+        order_id=r[1]
+        rtnmsg=r[2]
+        created_on=r[3] 
+        html = html+"<tr><td>"+str(i)+"</td><td>"+line_id+"</td><td>"+order_id+"</td><td>"+rtnmsg+"</td><td>"+created_on+"</td></tr>"
+        i=i+1
+    html = html+"</tbody></table>"
     """
     
     created_on = ''
@@ -62,7 +74,7 @@ def home():
     conn.close()    
     """
     #return 'Hello, World!  <br>最近付款成功時間:'+created_on+',<br>current_time:'+current_time.strftime('%Y/%m/%d %H:%M:%S')+',<br>差距時間:'+str(diff_minutes)+'分鐘'
-    return 'Hello, World!'
+    return 'Hello, World!<br>'+html
 
 # return_url: 綠界 Server 端回傳 (POST) 
 @app.route('/return_url', methods=['POST'])
