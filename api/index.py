@@ -314,9 +314,13 @@ def handle_message(event):
     if event.message.type == "text":  # 只要user輸入就判斷能否使用，若否則跳出付費視窗  
         useable = check_useable(line_id)
         print('useable ==> ',useable) 
-        if useable != 1 : 
-            order_id = datetime.now().strftime("NO%Y%m%d%H%M%S")            
+        if useable != 1 : # 不可使用，跳出付費視窗
+            order_id = datetime.now().strftime("NO%Y%m%d%H%M%S")     
             flex_content = get_flex_message_content(line_id, user_name, order_id) # 設定flexmessage模板
+            line_bot_api.push_message(line_id, FlexSendMessage(
+                alt_text='hello',
+                contents=flex_content
+            ))
             return
         
     if working_status:
