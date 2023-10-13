@@ -331,7 +331,6 @@ def check_useable(line_id):
     
     return useable
 
-
 @line_handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     global working_status
@@ -344,23 +343,21 @@ def handle_message(event):
     session['line_id'] = line_id
     session['user_name'] = user_name
     
-    # 紀錄user
+    # 紀錄user帳號
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
-    #cur.execute("insert  aism_accounts")
     cur.execute("insert into aism_accounts(line_id, user_name, created_on) values (%s, %s, (NOW() + interval '8 hour')) on conflict (line_id) do nothing",(line_id,user_name))
     cur.execute("commit")    
     cur.close()
     conn.close()
     
-    print("0.handle_message    line_id:",session['line_id'],",user_name:",session['user_name'])
-    #if event.message.text == "p":
-    if event.message.type == "text":    
+    print("0.handle_message    line_id:",session['line_id'],",user_name:",session['user_name']) 
+    if event.message.type == "text":  # 只要user輸入就判斷能否使用，若否則跳出付費視窗  
         useable = check_useable(line_id)
-        print('useable ==> ',useable)
-        #useable = 1
-        if useable != 1 :
-            pay(line_id,user_name)       
+        print('useable ==> ',useable) 
+        if useable != 1 : 
+            order_id = datetime.now().strftime("NO%Y%m%d%H%M%S")            
+            flex_content = get_flex_message_content(line_id, user_name, order_id) # 設定flexmessage模板
             return
         
     if working_status:
@@ -369,8 +366,7 @@ def handle_message(event):
         chatgpt.add_msg(f"AI:{reply_msg}\n")
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=reply_msg))     
-
-
+            TextSendMessage(text=reply_msg))
+        
 if __name__ == "__main__":
     app.run()
