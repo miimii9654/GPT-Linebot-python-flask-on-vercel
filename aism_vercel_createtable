@@ -1,0 +1,13 @@
+CREATE TABLE aism_accounts (
+	line_id VARCHAR ( 50 ) PRIMARY KEY,
+	user_name VARCHAR ( 50 ) NULL, 
+	created_on TIMESTAMP NOT NULL
+);
+
+CREATE TABLE aism_pay (
+	line_id VARCHAR ( 50 ) NOT NULL, 
+	order_id VARCHAR ( 50 ) NOT NULL,
+	rtnmsg VARCHAR ( 100 ) NULL,	
+	created_on TIMESTAMP NOT NULL
+	
+);
