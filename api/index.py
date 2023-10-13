@@ -1,4 +1,4 @@
-from flask import Flask, request, abort,session
+from flask import Flask, request, abort 
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, FlexSendMessage
@@ -27,8 +27,7 @@ sslmode = "require"
 port = "5432"
 conn_string = "host={0} user={1} dbname={2} password={3} sslmode={4}".format(host, user, dbname, password, sslmode)
 
-chatgpt = ChatGPT()
-CACHE = {} #付款用
+chatgpt = ChatGPT() 
 useable_minutes = 15 #每次付款可使用幾分鐘
 
 # domain root
@@ -61,23 +60,10 @@ def home():
         html = html+"<tr><td>"+str(i)+"</td><td>"+line_id+"</td><td>"+order_id+"</td><td>"+rtnmsg+"</td><td>"+created_on+"</td></tr>"
         i=i+1
     html = html+"</tbody></table>"
-    """
     
-    created_on = ''
-    cur.execute("select TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_pay where rtnmsg='Succeeded' order by created_on desc LIMIT 1")
-    for r in cur :
-        created_on=r[0] 
-    current_time = datetime.now() + timedelta(hours=8)
-    diff_minutes = 0
-    if created_on != '':        
-        diff_minutes = (current_time - datetime.strptime(created_on, '%Y/%m/%d %H:%M:%S')).total_seconds() / 60
-    cur.close()
-    conn.close()    
-    """
-    #return 'Hello, World!  <br>最近付款成功時間:'+created_on+',<br>current_time:'+current_time.strftime('%Y/%m/%d %H:%M:%S')+',<br>差距時間:'+str(diff_minutes)+'分鐘'
     return 'Hello, World!<br>'+html
 
-# return_url: 綠界 Server 端回傳 (POST) 
+# return_url: 綠界 Server 端回傳 (POST) 付款成功
 @app.route('/return_url', methods=['POST'])
 def return_url():    
     RtnMsg = request.form['RtnMsg']
@@ -99,11 +85,10 @@ def return_url():
         html = '<h1>訂單編號:'+order_id+'</h1><h1>很抱歉您的付款沒有成功</h1><h2>錯誤訊息:'+RtnMsg+'</h2>step:return_url'
     return html
 
-# order_result_url: 綠界 Server 端回傳 (POST) 失敗
+# order_result_url: 綠界 Server 端回傳 (POST) 付款失敗
 @app.route('/order_result_url', methods=['POST'])
 def order_result_url():
-    RtnMsg = request.form['RtnMsg']
-    #print("4.order_result_url  order_id:",CACHE["order_id"],',line_id:',CACHE['line_id'],',user_name:',CACHE['user_name'])
+    RtnMsg = request.form['RtnMsg'] 
     print(RtnMsg)
     order_id = request.form['MerchantTradeNo']
     print('4.order_result_url   order_id =>',order_id)     
@@ -124,22 +109,14 @@ def order_result_url():
     
 @app.route("/ecpay", methods=['GET']) 
 def ecpay():
-    """
-    spec = importlib.util.spec_from_file_location(
-        "ecpay_payment_sdk",
-        "sdk/ecpay_payment_sdk.py"
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    """
     host_name = request.host_url
     line_id = request.args.get("line_id")
     order_id = request.args.get("order_id")
-    print("23.ecpay  order_id:",order_id,",host_name:",host_name)
+    print("2.ecpay  order_id:",order_id,",host_name:",host_name)
     #user_name = request.args.get("user_name")
     #print('MerchantTradeNo:',MerchantTradeNo )
     order_params = {
-        'MerchantTradeNo': order_id, #session['order_id'], #datetime.now().strftime("NO%Y%m%d%H%M%S"),
+        'MerchantTradeNo': order_id, 
         'StoreID': '',
         'MerchantTradeDate': datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
@@ -309,10 +286,7 @@ def handle_message(event):
         return
     
     line_id = json.loads(str(event.source))['userId']
-    user_name = line_bot_api.get_profile(line_id).display_name # 取得line名稱
-    CACHE["line_id"] = line_id
-    session['line_id'] = line_id
-    session['user_name'] = user_name
+    user_name = line_bot_api.get_profile(line_id).display_name # 取得line名稱 
     
     # 紀錄user帳號
     conn = psycopg2.connect(conn_string) 
@@ -322,7 +296,7 @@ def handle_message(event):
     cur.close()
     conn.close()
     
-    print("0.handle_message    line_id:",session['line_id'],",user_name:",session['user_name']) 
+    print("0.handle_message    line_id:",line_id,",user_name:",user_name) 
     if event.message.type == "text":  # 只要user輸入就判斷能否使用，若否則跳出付費視窗  
         useable = check_useable(line_id)
         print('useable ==> ',useable) 
