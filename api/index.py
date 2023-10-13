@@ -122,6 +122,7 @@ def ecpay():
     spec.loader.exec_module(module)
     """
     host_name = request.host_url
+    line_id = request.args.get("line_id")
     order_id = request.args.get("order_id")
     print("23.ecpay  order_id:",order_id,",host_name:",host_name)
     #user_name = request.args.get("user_name")
@@ -236,10 +237,10 @@ def ecpay():
         html = '<html><body>'+html+'</body></html>'
         
         # 建立交易order_id
-        print('建立交易order_id:',CACHE["order_id"],',   line_id:', CACHE["line_id"]  )
+        print('建立交易order_id:',order_id,',   line_id:', line_id)
         conn = psycopg2.connect(conn_string) 
         cur = conn.cursor()
-        cur.execute("insert into aism_pay(line_id, order_id, created_on) values (%s, %s, (NOW() + interval '8 hour'))  ",(CACHE['line_id'], CACHE["order_id"]))
+        cur.execute("insert into aism_pay(line_id, order_id, created_on) values (%s, %s, (NOW() + interval '8 hour'))  ",(line_id, order_id))
         cur.execute("commit")    
         cur.close()
         conn.close()
