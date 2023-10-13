@@ -34,7 +34,8 @@ useable_minutes = 15 #每次付款可使用幾分鐘
 # domain root
 @app.route('/')
 def home():
-    html = '<h2>aism_accounts</h2>'
+    html = '<style> table,td {  border: 1px solid #333;} thead,tfoot {  background-color: #333;  color: #fff;}</style>'
+    html = html+'<h2>aism_accounts</h2>'
     html = html+"<table style='border: 1px solid #333;'><thead style='border: 1px solid #333;'><tr><th>no</th><th>line_id</th><th>user_name</th><th>created_on</th></tr></thead><tbody style='border: 1px solid #333;'>"    
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
