@@ -2,25 +2,18 @@ from flask import Flask, request, abort,session
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, FlexSendMessage
-from linepay import LinePayApi
 from api.chatgpt import ChatGPT
 from api.flex_message_template import get_flex_message_content
 from api.ecpay_payment_sdk import ECPayPaymentSdk
 import json
 import os
-import uuid
-
-import importlib.util
 from datetime import datetime,timedelta
 import psycopg2
 
-LINE_PAY_CHANNEL_ID = os.getenv("LINE_PAY_CHANNEL_ID")
-LINE_PAY_CHANNEL_SECRET = os.getenv("LINE_CHANNEL_SECRET")
-line_pay_api = LinePayApi(LINE_PAY_CHANNEL_ID, LINE_PAY_CHANNEL_SECRET, is_sandbox=True)
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 working_status = os.getenv("DEFALUT_TALKING", default = "true").lower() == "true"
-LINE_PAY_REQEST_BASE_URL = "https://{}".format('gpt-linebot-python-flask-on-vercel-puce-two.vercel.app') 
+
 app = Flask(__name__)
 app.secret_key = 'super secret string'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=31)
@@ -36,7 +29,7 @@ conn_string = "host={0} user={1} dbname={2} password={3} sslmode={4}".format(hos
 
 chatgpt = ChatGPT()
 CACHE = {} #付款用
-useable_minutes = 15
+useable_minutes = 15 #每次付款可使用幾分鐘
 
 # domain root
 @app.route('/')
@@ -60,10 +53,8 @@ def home():
 
 # return_url: 綠界 Server 端回傳 (POST) 
 @app.route('/return_url', methods=['POST'])
-def return_url():
-    #print("3.receive_result  order_id:",CACHE["order_id"],',line_id:',session['line_id'],',user_name:',session['user_name'])
+def return_url():    
     RtnMsg = request.form['RtnMsg']
-    #print(RtnMsg)
     order_id = request.form['MerchantTradeNo']
     print('3.return_url  order_id =>',order_id,',RtnMsg:',RtnMsg)
     
@@ -74,15 +65,6 @@ def return_url():
     cur.execute("commit")    
     cur.close()
     conn.close()
-    
-    """
-    result = request.form['RtnMsg']
-    tid = request.form['CustomField1']
-    trade_detail = sql.Transaction.query.filter_by(tid=tid).first()
-    trade_detail.status = '交易成功 sever post'
-    db.session.add(trade_detail)
-    db.session.commit()
-    """
     
     if RtnMsg == 'Succeeded' :
         start_time = (datetime.now()+timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
@@ -146,13 +128,13 @@ def ecpay():
         'TotalAmount': 5,
         'TradeDesc': '訂單測試',
         'ItemName': 'AI敏捷專家Line諮詢(1小時)',
-        'ReturnURL': host_name+'return_url', #'https://gpt-linebot-python-flask-on-vercel-puce-two.vercel.app/',  #'https://www.ecpay.com.tw/return_url.php',
+        'ReturnURL': host_name+'return_url', #'https://gpt-linebot-python-flask-on-vercel-puce-two.vercel.app/', 
         'ChoosePayment': 'ALL',
-        'ClientBackURL': 'https://www.ecpay.com.tw/client_back_url.php', # 'https://tw.yahoo.com/',
+        'ClientBackURL': 'https://www.ecpay.com.tw/client_back_url.php', 
         'ItemURL': 'https://www.ecpay.com.tw/item_url.php',
         'Remark': '交易備註',
         'ChooseSubPayment': '',
-        'OrderResultURL': host_name+'order_result_url', #'https://udn.com/news/index', #'https://www.ecpay.com.tw/order_result_url.php',
+        'OrderResultURL': host_name+'order_result_url', #'https://udn.com/news/index', 
         'NeedExtraPaidInfo': 'Y',
         'DeviceSource': '',
         'IgnorePayment': '',
@@ -235,9 +217,7 @@ def ecpay():
     order_params.update(extend_params_4)
     
     # 合併發票參數
-    order_params.update(inv_params)
-
-    
+    order_params.update(inv_params)   
     
     try:
         # 產生綠界訂單所需參數
@@ -248,7 +228,7 @@ def ecpay():
         action_url = 'https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5' # 正式環境
         html = ecpay_payment_sdk.gen_html_post_form(action_url, final_order_params)
         html = '<html><body>'+html+'</body></html>'
-        #print(html)
+        
         # 建立交易order_id
         print('建立交易order_id:',CACHE["order_id"],',   line_id:', CACHE["line_id"]  )
         conn = psycopg2.connect(conn_string) 
@@ -326,25 +306,28 @@ def pay(line_id,user_name):
 def check_useable(line_id):
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
-    created_on = ''
-    #cur.execute("select TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_pay where rtnmsg='Succeeded' and line_id=%s order by created_on desc LIMIT 1",(line_id))
+
+    # 取得user最近付款紀錄的時間
+    created_on = ''    
     cur.execute("select TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_pay where rtnmsg in ('Succeeded','paid') and line_id='"+line_id+"' order by created_on desc LIMIT 1")
     for r in cur :
-        created_on=r[0]         
+        created_on=r[0]
+    cur.close()
+    conn.close() 
+    
     current_time = datetime.now() + timedelta(hours=8)
     print('check_useable  current_time:',current_time.strftime("%Y/%m/%d %H:%M:%S"),',created_on:',created_on) 
     if created_on != '':        
         diff_minutes = (current_time - datetime.strptime(created_on, '%Y/%m/%d %H:%M:%S')).total_seconds() / 60
-        if diff_minutes > useable_minutes :
-            print('diff_minutes:',diff_minutes,',超過useable_minutes:',useable_minutes)
+        if diff_minutes > useable_minutes :            
             useable = 2 # over useable_minutes
+            print('diff_minutes:',diff_minutes,',超過useable_minutes:',useable_minutes,',useable:',useable,'==>超過使用時間，不可使用')
         else :    
             useable = 1 # in useable_minutes
+            print('diff_minutes:',diff_minutes,',沒有超過useable_minutes:',useable_minutes,',useable:',useable,'==>還在使用時間內，可使用')
     else :
         useable = 3 # not pay
-    
-    cur.close()
-    conn.close() 
+        print('useable:',useable,'==>沒付過款，不可使用')
     
     return useable
 
