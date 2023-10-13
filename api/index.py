@@ -318,7 +318,7 @@ def handle_message(event):
         if useable != 1 : # 不可使用，跳出付費視窗
             host_name = request.host_url
             order_id = datetime.now().strftime("NO%Y%m%d%H%M%S")     
-            flex_content = get_flex_message_content(host_name, user_name, order_id) # 設定flexmessage模板
+            flex_content = get_flex_message_content(host_name, user_name, line_id, order_id) # 設定flexmessage模板
             line_bot_api.push_message(line_id, FlexSendMessage(
                 alt_text='hello',
                 contents=flex_content
