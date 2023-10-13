@@ -34,13 +34,20 @@ useable_minutes = 15 #每次付款可使用幾分鐘
 # domain root
 @app.route('/')
 def home():
-    """
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
+    cur.execute("select line_id,user_name,TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_accounts order by created_on desc LIMIT 10")
+    i = 1
+    for r in cur :
+        created_on=r[0] 
+        
+    
+    """
+    
     created_on = ''
     cur.execute("select TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_pay where rtnmsg='Succeeded' order by created_on desc LIMIT 1")
     for r in cur :
-        created_on=r[0]         
+        created_on=r[0] 
     current_time = datetime.now() + timedelta(hours=8)
     diff_minutes = 0
     if created_on != '':        
@@ -64,8 +71,7 @@ def return_url():
     cur.execute("update aism_pay set rtnmsg=%s , created_on= (NOW() + interval '8 hour') where order_id=%s",(RtnMsg, order_id))    
     cur.execute("commit")    
     cur.close()
-    conn.close()
-    
+    conn.close()    
     if RtnMsg == 'Succeeded' :
         start_time = (datetime.now()+timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
         end_time = (datetime.now() +timedelta(hours=8) + timedelta(minutes=15)).strftime('%Y-%m-%d %H:%M:%S')
@@ -255,53 +261,6 @@ def callback():
     except InvalidSignatureError:
         abort(400)
     return 'OK'
-
-def pay(line_id,user_name):
-    product_name = 'AI敏捷專家Line諮詢(1小時)'
-    price = 99
-    order_id = datetime.now().strftime("NO%Y%m%d%H%M%S") #str(uuid.uuid4())
-    amount = 1
-    currency = "TWD"
-    CACHE["order_id"] = order_id
-    session['order_id'] = order_id
-    print("1.pay  order_id:",session['order_id'],',line_id:',line_id,',user_name:',user_name)
-    CACHE["amount"] = amount
-    CACHE["currency"] = currency
-    
-    #-------------設定flex message----------------------------------   
-    flex_content = get_flex_message_content(line_id, user_name, order_id) # 設定flexmessage模板
-    #---------------------------------------------------------------
-    request_options = {
-        "amount": amount,
-        "currency": currency,
-        "orderId": order_id,
-        "packages": [
-            {
-                "id": "package-999",
-                "amount": amount,
-                "name": "Sample package",
-                "products": [
-                    {
-                        "id": "product-001",
-                        "name": "Sample product",
-                        "imageUrl": "https://www.pm-abc.com.tw/img/index/banner_pc_1.jpg",
-                                    "quantity": 1,
-                                    "price": price
-                    }
-                ]
-            }
-        ],
-        "redirectUrls": {
-            "confirmUrl": LINE_PAY_REQEST_BASE_URL + "/confirm",
-            "cancelUrl": LINE_PAY_REQEST_BASE_URL + "/cancel"
-        }
-    }
-
-    
-    line_bot_api.push_message(line_id, FlexSendMessage(
-                        alt_text='hello',
-                        contents=flex_content
-                    ))
 
 def check_useable(line_id):
     conn = psycopg2.connect(conn_string) 
