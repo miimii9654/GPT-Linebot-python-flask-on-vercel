@@ -35,7 +35,7 @@ useable_minutes = 15 #每次付款可使用幾分鐘
 @app.route('/')
 def home():
     html = '<h2>aism_accounts</h2>'
-    html = html+"<table><thead><tr><th>no</th><th>line_id</th><th>user_name</th><th>created_on</th></tr></thead><tbody>"    
+    html = html+"<table style='border: 1px solid #333;'><thead><tr><th>no</th><th>line_id</th><th>user_name</th><th>created_on</th></tr></thead><tbody>"    
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
     cur.execute("select line_id,user_name,TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_accounts order by created_on desc")
@@ -49,7 +49,7 @@ def home():
     html = html+"</tbody></table>"
     
     html = html+'<h2>aism_pay</h2>'
-    html = html+"<table><thead><tr><th>no</th><th>line_id</th><th>order_id</th><th>rtnmsg</th><th>created_on</th></tr></thead><tbody>"    
+    html = html+"<table style='border: 1px solid #333;'><thead><tr><th>no</th><th>line_id</th><th>order_id</th><th>rtnmsg</th><th>created_on</th></tr></thead><tbody>"    
     cur.execute("select line_id,order_id,COALESCE(rtnmsg,''),TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_pay order by created_on desc")
     i = 1
     for r in cur :
