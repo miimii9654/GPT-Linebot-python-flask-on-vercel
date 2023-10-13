@@ -50,7 +50,7 @@ def home():
     
     html = html+'<h2>aism_pay</h2>'
     html = html+"<table><thead><tr>no</tr><tr>line_id</tr><tr>order_id</tr><tr>rtnmsg</tr><tr>created_on</tr></thead><tbody>"    
-    cur.execute("select line_id,order_id,IFNULL(rtnmsg,''),TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_pay order by created_on desc")
+    cur.execute("select line_id,order_id,COALESCE(rtnmsg,''),TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_pay order by created_on desc")
     i = 1
     for r in cur :
         line_id=r[0]
