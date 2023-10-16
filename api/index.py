@@ -19,10 +19,10 @@ app.secret_key = 'super secret string'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=31)
 
 # db setting
-host = "ep-solitary-glade-75192711.us-east-1.postgres.vercel-storage.com"
+host = "ep-mute-shadow-01896252-pooler.us-east-1.postgres.vercel-storage.com"
 dbname = "verceldb"
 user = "default"
-password = "9l5YHtOCTyRJ"
+password = "odK4NhsH1cOC"
 sslmode = "require"
 port = "5432"
 conn_string = "host={0} user={1} dbname={2} password={3} sslmode={4}".format(host, user, dbname, password, sslmode)
