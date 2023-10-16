@@ -38,7 +38,7 @@ def home():
     html = html+"<table style='border: 1px solid #333;'><thead style='border: 1px solid #333;'><tr><th>no</th><th>line_id</th><th>user_name</th><th>created_on</th></tr></thead><tbody style='border: 1px solid #333;'>"    
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
-    cur.execute("select line_id,user_name,TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_accounts_1 order by created_on desc")
+    cur.execute("select line_id,user_name,TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_accounts order by created_on desc")
     i = 1
     for r in cur :
         line_id=r[0]
@@ -50,7 +50,7 @@ def home():
     
     html = html+'<h2>付款情形(aism_pay)</h2>'
     html = html+"<table style='border: 1px solid #333;'><thead style='border: 1px solid #333;'><tr><th>no</th><th>line_id</th><th>order_id</th><th>rtnmsg</th><th>created_on</th></tr></thead><tbody style='border: 1px solid #333;'>"    
-    cur.execute("select line_id,order_id,COALESCE(rtnmsg,''),TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_pay_1 order by created_on desc")
+    cur.execute("select line_id,order_id,COALESCE(rtnmsg,''),TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_pay order by created_on desc")
     i = 1
     for r in cur :
         line_id=r[0]
@@ -73,11 +73,11 @@ def return_url():
     # 更新交易結果
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
-    cur.execute("update aism_pay_1 set rtnmsg=%s , created_on= (NOW() + interval '8 hour') where order_id=%s",(RtnMsg, order_id))    
+    cur.execute("update aism_pay set rtnmsg=%s , created_on= (NOW() + interval '8 hour') where order_id=%s",(RtnMsg, order_id))    
     cur.execute("commit")    
     cur.close()
     conn.close()    
-    if RtnMsg == 'Succeeded' or RtnMsg == 'paid' :
+    if RtnMsg == 'Succeeded' or RtnMsg == 'paid' or RtnMsg == '交易成功':
         start_time = (datetime.now()+timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
         end_time = (datetime.now() +timedelta(hours=8) + timedelta(minutes=15)).strftime('%Y-%m-%d %H:%M:%S')
         html = '<h1>訂單編號:'+order_id+'</h1><h1>恭喜您付款成功，您可開始跟AI敏捷專家對話，使用的時間區間為一小時</h1><h2>開始時間:'+start_time+'</h2><h2>結束時間:'+end_time+'</h2>'
@@ -95,11 +95,11 @@ def order_result_url():
     # 更新交易結果
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
-    cur.execute("update aism_pay_1 set rtnmsg=%s , created_on= (NOW() + interval '8 hour') where order_id=%s",(RtnMsg, order_id))  
+    cur.execute("update aism_pay set rtnmsg=%s , created_on= (NOW() + interval '8 hour') where order_id=%s",(RtnMsg, order_id))  
     cur.execute("commit")    
     cur.close()
     conn.close()
-    if RtnMsg == 'Succeeded' or RtnMsg == 'paid' :
+    if RtnMsg == 'Succeeded' or RtnMsg == 'paid' or RtnMsg == '交易成功':
         start_time = (datetime.now()+timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
         end_time = (datetime.now() +timedelta(hours=8) + timedelta(minutes=15)).strftime('%Y-%m-%d %H:%M:%S')
         html = '<h1>訂單編號:'+order_id+'</h1><h1>恭喜您付款成功，您可開始跟AI敏捷專家對話，使用的時間區間為一小時</h1><h2>開始時間:'+start_time+'</h2><h2>結束時間:'+end_time+'</h2>'
@@ -228,7 +228,7 @@ def ecpay():
         print('建立交易order_id:',order_id,',   line_id:', line_id)
         conn = psycopg2.connect(conn_string) 
         cur = conn.cursor()
-        cur.execute("insert into aism_pay_1(line_id, order_id, created_on) values (%s, %s, (NOW() + interval '8 hour'))  ",(line_id, order_id))
+        cur.execute("insert into aism_pay(line_id, order_id, created_on) values (%s, %s, (NOW() + interval '8 hour'))  ",(line_id, order_id))
         cur.execute("commit")    
         cur.close()
         conn.close()
@@ -257,7 +257,7 @@ def check_useable(line_id):
 
     # 取得user最近付款紀錄的時間
     created_on = ''    
-    cur.execute("select TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_pay_1 where rtnmsg in ('Succeeded','paid') and line_id='"+line_id+"' order by created_on desc LIMIT 1")
+    cur.execute("select TO_CHAR(created_on, 'YYYY/MM/DD HH24:MI:SS') from aism_pay where rtnmsg in ('Succeeded','paid', '交易成功') and line_id='"+line_id+"' order by created_on desc LIMIT 1")
     for r in cur :
         created_on=r[0]
     cur.close()
@@ -291,7 +291,7 @@ def handle_message(event):
     # 紀錄user帳號
     conn = psycopg2.connect(conn_string) 
     cur = conn.cursor()
-    cur.execute("insert into aism_accounts_1(line_id, user_name, created_on) values (%s, %s, (NOW() + interval '8 hour')) on conflict (line_id) do nothing",(line_id,user_name))
+    cur.execute("insert into aism_accounts(line_id, user_name, created_on) values (%s, %s, (NOW() + interval '8 hour')) on conflict (line_id) do nothing",(line_id,user_name))
     cur.execute("commit")    
     cur.close()
     conn.close()
